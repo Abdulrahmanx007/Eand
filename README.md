@@ -1,4 +1,4 @@
-# 🚀 SAD - Support Agent Dashboard
+# 🚀 Support Agent Dashboard
 
 > **### 🌓 **Dark/Light Theme Toggle**
 - Click the theme button (🌙/☀️) in the header to switch themes

@@ -1,0 +1,220 @@
+<!-- 🚀 Performance Mode Visual Indicator -->
+<!-- Add this snippet right after the opening <body> tag on each page -->
+
+<div id="performanceIndicator" class="performance-indicator">
+    <div class="indicator-content">
+        <span class="indicator-icon">⚡</span>
+        <span class="indicator-text">Performance: <strong id="perfModeText">Low</strong></span>
+        <div class="indicator-badge" id="perfBadge">
+            <span class="badge-dot"></span>
+            <span class="badge-label">OPTIMIZED</span>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 🎨 HIGH PERFORMANCE - Floating Indicator with Glass Effect */
+body:not(.low-performance) .performance-indicator {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 999;
+    background: var(--glass-bg);
+    backdrop-filter: var(--blur-lg);
+    -webkit-backdrop-filter: var(--blur-lg);
+    border: 2px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 12px 20px;
+    box-shadow: var(--shadow-xl), var(--glow-rainbow);
+    animation: indicatorFloat 3s ease-in-out infinite;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+body:not(.low-performance) .performance-indicator:hover {
+    opacity: 1;
+}
+
+@keyframes indicatorFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+body:not(.low-performance) .indicator-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+body:not(.low-performance) .indicator-icon {
+    font-size: 24px;
+    animation: iconSpin 4s linear infinite;
+}
+
+@keyframes iconSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+body:not(.low-performance) .indicator-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+body:not(.low-performance) .indicator-text strong {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body:not(.low-performance) .indicator-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(168, 85, 247, 0.2));
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--accent-cyan);
+}
+
+body:not(.low-performance) .badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 12px var(--accent-green);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+body:not(.low-performance) .badge-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    letter-spacing: 1px;
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Minimal Indicator */
+.low-performance .performance-indicator {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 999;
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    opacity: 0.85;
+}
+
+.low-performance .indicator-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.low-performance .indicator-icon {
+    font-size: 18px;
+}
+
+.low-performance .indicator-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.low-performance .indicator-text strong {
+    color: var(--accent-cyan);
+}
+
+.low-performance .indicator-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 212, 255, 0.1);
+    padding: 3px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--accent-cyan);
+}
+
+.low-performance .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+}
+
+.low-performance .badge-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    letter-spacing: 0.5px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .performance-indicator {
+        top: auto;
+        bottom: 20px;
+        right: 10px;
+        padding: 8px 12px;
+    }
+    
+    .indicator-icon {
+        font-size: 18px;
+    }
+    
+    .indicator-text {
+        font-size: 12px;
+    }
+    
+    .indicator-badge {
+        padding: 3px 6px;
+    }
+    
+    .badge-label {
+        font-size: 9px;
+    }
+}
+</style>
+
+<script>
+// Update indicator based on performance mode
+(function() {
+    function updateIndicator() {
+        const perfText = document.getElementById('perfModeText');
+        const perfBadge = document.getElementById('perfBadge');
+        const isLow = document.body.classList.contains('low-performance');
+        
+        if (perfText) {
+            perfText.textContent = isLow ? 'Low' : 'High';
+        }
+        
+        if (perfBadge) {
+            const dot = perfBadge.querySelector('.badge-dot');
+            const label = perfBadge.querySelector('.badge-label');
+            
+            if (isLow) {
+                if (dot) dot.style.background = 'var(--accent-yellow)';
+                if (label) label.textContent = 'FAST MODE';
+            } else {
+                if (dot) dot.style.background = 'var(--accent-green)';
+                if (label) label.textContent = 'ULTRA MODE';
+            }
+        }
+    }
+    
+    // Update on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateIndicator);
+    } else {
+        updateIndicator();
+    }
+    
+    // Watch for class changes
+    const observer = new MutationObserver(updateIndicator);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>

@@ -1,0 +1,1 @@
+This folder stores ephemeral task metadata. Safe to ignore.

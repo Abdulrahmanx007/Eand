@@ -1,0 +1,1727 @@
+/* 🚀 2025 CUTTING-EDGE DESIGN - HIGH PERFORMANCE MODE */
+/* CSS Variables for Dark/Light Theme */
+:root {
+  color-scheme: light dark;
+  
+  /* 🎨 Dark theme - Ultra-modern with advanced graphics */
+  --bg-primary: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0a1f 100%);
+  --bg-secondary: rgba(15, 17, 24, 0.85);
+  --bg-card: linear-gradient(145deg, rgba(0, 212, 255, 0.08) 0%, rgba(157, 78, 221, 0.08) 50%, rgba(255, 0, 110, 0.05) 100%);
+  --bg-hover: linear-gradient(145deg, rgba(0, 212, 255, 0.18) 0%, rgba(157, 78, 221, 0.18) 50%, rgba(255, 0, 110, 0.12) 100%);
+  --border-primary: rgba(30, 34, 48, 0.8);
+  --border-secondary: rgba(0, 212, 255, 0.35);
+  --border-card: linear-gradient(145deg, rgba(0, 212, 255, 0.25), rgba(157, 78, 221, 0.25), rgba(255, 0, 110, 0.2));
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  /* 🌈 2025 Accent Colors */
+  --accent-cyan: #00f0ff;
+  --accent-purple: #a855f7;
+  --accent-yellow: #fbbf24;
+  --accent-red: #f43f5e;
+  --accent-green: #10b981;
+  --accent-pink: #ec4899;
+  --accent-blue: #3b82f6;
+  --accent-orange: #f97316;
+  
+  /* 🎭 Glassmorphism & Effects */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --nav-bg: linear-gradient(145deg, rgba(21, 24, 38, 0.95) 0%, rgba(27, 32, 49, 0.95) 100%);
+  --nav-hover: linear-gradient(145deg, rgba(0, 212, 255, 0.2) 0%, rgba(157, 78, 221, 0.2) 100%);
+  
+  /* ✨ Advanced Shadows & Glows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 212, 255, 0.1);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 212, 255, 0.15);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.4), 0 8px 30px rgba(157, 78, 221, 0.2);
+  --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.6), 0 0 60px rgba(0, 240, 255, 0.3);
+  --glow-purple: 0 0 30px rgba(168, 85, 247, 0.6), 0 0 60px rgba(168, 85, 247, 0.3);
+  --glow-rainbow: 0 0 40px rgba(0, 240, 255, 0.4), 0 0 80px rgba(168, 85, 247, 0.3), 0 0 120px rgba(236, 72, 153, 0.2);
+  
+  /* 🎯 Backdrop Filters (2025 Standard) */
+  --blur-sm: blur(8px);
+  --blur-md: blur(16px);
+  --blur-lg: blur(24px);
+  --blur-xl: blur(40px);
+}
+
+/* ☀️ Light theme - Clean 2025 aesthetic */
+[data-theme="light"] {
+  --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 50%, #f1f5f9 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.9);
+  --bg-card: linear-gradient(145deg, rgba(59, 130, 246, 0.04) 0%, rgba(168, 85, 247, 0.04) 50%, rgba(236, 72, 153, 0.03) 100%);
+  --bg-hover: linear-gradient(145deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 50%, rgba(236, 72, 153, 0.08) 100%);
+  --border-primary: rgba(226, 232, 240, 0.8);
+  --border-secondary: rgba(59, 130, 246, 0.3);
+  --border-card: linear-gradient(145deg, rgba(59, 130, 246, 0.25), rgba(168, 85, 247, 0.25), rgba(236, 72, 153, 0.2));
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  --accent-cyan: #0ea5e9;
+  --accent-purple: #9333ea;
+  --accent-yellow: #f59e0b;
+  --accent-red: #dc2626;
+  --accent-green: #059669;
+  --accent-pink: #db2777;
+  --accent-blue: #2563eb;
+  --accent-orange: #ea580c;
+  
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --nav-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+  --nav-hover: linear-gradient(145deg, rgba(59, 130, 246, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%);
+  
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.08), 0 1px 6px rgba(59, 130, 246, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12), 0 3px 16px rgba(59, 130, 246, 0.1);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.15), 0 6px 24px rgba(168, 85, 247, 0.12);
+  --glow-cyan: 0 0 24px rgba(14, 165, 233, 0.4), 0 0 48px rgba(14, 165, 233, 0.2);
+  --glow-purple: 0 0 24px rgba(147, 51, 234, 0.4), 0 0 48px rgba(147, 51, 234, 0.2);
+  --glow-rainbow: 0 0 32px rgba(14, 165, 233, 0.3), 0 0 64px rgba(147, 51, 234, 0.2), 0 0 96px rgba(219, 39, 119, 0.15);
+}
+
+/* ⚡ LOW PERFORMANCE MODE - Fast & Flat Design (Dark Theme) */
+.low-performance {
+  /* Override all fancy variables with flat colors */
+  --bg-primary: #111;
+  --bg-secondary: #0f1118;
+  --bg-card: rgba(255,255,255,0.04);
+  --bg-hover: rgba(255,255,255,0.08);
+  --border-primary: #1e2230;
+  --border-secondary: #2a3042;
+  --border-card: rgba(255,255,255,0.08);
+  --glass-bg: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.06);
+  --nav-bg: #151826;
+  --nav-hover: #1b2031;
+  
+  /* Minimal shadows */
+  --shadow-sm: none;
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.2);
+  --shadow-lg: 0 4px 8px rgba(0,0,0,0.25);
+  --shadow-xl: 0 6px 12px rgba(0,0,0,0.3);
+  --glow-cyan: none;
+  --glow-purple: none;
+  --glow-rainbow: none;
+  
+  /* No blur */
+  --blur-sm: none;
+  --blur-md: none;
+  --blur-lg: none;
+  --blur-xl: none;
+}
+
+/* ☀️ LOW PERFORMANCE MODE - Light Theme Override */
+[data-theme="light"] .low-performance {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hover: #e8e8e8;
+  --border-primary: #d0d0d0;
+  --border-secondary: #c0c0c0;
+  --border-card: #e0e0e0;
+  --glass-bg: #fafafa;
+  --glass-border: #e5e5e5;
+  --nav-bg: #ffffff;
+  --nav-hover: #f0f0f0;
+  
+  /* Light theme text colors */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  /* Light theme accents */
+  --accent-cyan: #0ea5e9;
+  --accent-purple: #9333ea;
+  --accent-yellow: #f59e0b;
+  --accent-red: #dc2626;
+  --accent-green: #059669;
+  --accent-pink: #db2777;
+  --accent-blue: #2563eb;
+  --accent-orange: #ea580c;
+}
+
+/* � SMOOTH PAGE LOAD ANIMATIONS */
+@keyframes pageLoad {
+  0% { 
+    opacity: 0; 
+    transform: translateY(20px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply page load animation to containers */
+body:not(.low-performance) .container {
+  animation: pageLoad 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+body:not(.low-performance) .app-header {
+  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+
+body:not(.low-performance) .card {
+  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: calc(var(--card-index, 0) * 0.05s);
+}
+
+body:not(.low-performance) .site-header {
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* 🎨 CUSTOM SCROLLBAR */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+  border-radius: 10px;
+  border: 2px solid var(--bg-secondary);
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
+  box-shadow: 0 0 10px var(--accent-cyan);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-cyan) var(--bg-secondary);
+}
+
+/* Low performance - simple scrollbar */
+.low-performance ::-webkit-scrollbar-thumb {
+  background: var(--border-secondary);
+  box-shadow: none;
+}
+
+.low-performance ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* �🎬 ULTRA-SMOOTH ANIMATIONS - High Performance Only */
+body:not(.low-performance) * {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body:not(.low-performance) .card,
+body:not(.low-performance) .tool-card {
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
+}
+
+body:not(.low-performance) .theme-toggle,
+body:not(.low-performance) .nav-link,
+body:not(.low-performance) .copDb {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Elastic */
+}
+
+/* ⚡ LOW PERFORMANCE - NO TRANSITIONS */
+.low-performance,
+.low-performance * {
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+/* 🎨 HIGH PERFORMANCE - Advanced Theme Toggle with 3D */
+body:not(.low-performance) .theme-toggle {
+  cursor: pointer;
+  font-size: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 2px solid var(--glass-border);
+  padding: 10px 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .theme-toggle::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(0, 240, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+body:not(.low-performance) .theme-toggle:hover {
+  background: var(--nav-hover);
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-3px) scale(1.05);
+}
+
+body:not(.low-performance) .theme-toggle:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+body:not(.low-performance) .theme-toggle .theme-icon {
+  font-size: 22px;
+  filter: drop-shadow(0 0 12px currentColor);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(5deg); }
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Theme Toggle */
+.low-performance .theme-toggle {
+  cursor: pointer;
+  font-size: 20px;
+  background: var(--nav-bg);
+  border: 1px solid var(--border-secondary);
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+}
+
+.low-performance .theme-toggle:hover {
+  background: var(--nav-hover);
+}
+
+.low-performance .theme-toggle::before {
+  display: none;
+}
+
+.low-performance .theme-toggle .theme-icon {
+  font-size: 18px;
+  filter: none;
+}
+
+
+/* 🎨 HIGH PERFORMANCE - Glassmorphism Header with Backdrop Blur */
+body:not(.low-performance) .site-header { 
+  position: sticky; 
+  top: 0; 
+  z-index: 1000; 
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  border-bottom: 2px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ⚡ LOW PERFORMANCE - Solid Header */
+.low-performance .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  backdrop-filter: none;
+}
+
+.site-header-inner { 
+  max-width: 1100px; 
+  margin: 0 auto; 
+  padding: 12px 20px; 
+  display: flex; 
+  align-items: center; 
+  gap: 20px; 
+  justify-content: space-between; 
+}
+
+.brand-row { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+}
+
+/* 🎨 HIGH PERFORMANCE - Animated Gradient Badge */
+body:not(.low-performance) .brand-badge { 
+  font-weight: 700; 
+  font-size: 13px; 
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+  background-size: 200% 200%;
+  animation: gradientFlow 5s ease infinite;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 14px;
+  box-shadow: var(--glow-rainbow);
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .brand-badge::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Badge */
+.low-performance .brand-badge {
+  font-weight: 700;
+  font-size: 13px;
+  background: var(--accent-yellow);
+  color: #111;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.low-performance .brand-badge::before {
+  display: none;
+}
+
+/* 🎨 HIGH PERFORMANCE - Ultra Gradient Title with Text Shadow */
+body:not(.low-performance) .title-gradient { 
+  font-weight: 800; 
+  font-size: 24px; 
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 30%, var(--accent-pink) 60%, var(--accent-orange) 100%);
+  background-size: 300% 300%;
+  animation: gradientFlow 8s ease infinite;
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+  background-clip: text;
+  filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.6)) drop-shadow(0 0 32px rgba(168, 85, 247, 0.4));
+  position: relative;
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Gradient Title */
+.low-performance .title-gradient {
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--accent-cyan);
+  filter: none;
+}
+
+
+/* 🎨 HIGH PERFORMANCE - 3D Interactive Navigation Links */
+body:not(.low-performance) .site-nav { 
+  display: flex; 
+  gap: 12px; 
+  align-items: center; 
+}
+
+body:not(.low-performance) .site-nav .nav-link { 
+  color: var(--text-secondary); 
+  text-decoration: none; 
+  font-size: 14px; 
+  font-weight: 600;
+  padding: 10px 16px; 
+  border-radius: 14px; 
+  border: 2px solid transparent;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .site-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+body:not(.low-performance) .site-nav .nav-link:hover::before {
+  left: 100%;
+}
+
+body:not(.low-performance) .site-nav button.nav-link { 
+  cursor: pointer; 
+  font-family: inherit; 
+}
+
+body:not(.low-performance) .site-nav .nav-link[aria-current="page"],
+body:not(.low-performance) .site-nav .nav-link:hover { 
+  color: var(--accent-cyan);
+  background: var(--nav-hover);
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-3px) scale(1.05);
+}
+
+body:not(.low-performance) .site-nav .nav-link:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Navigation */
+.low-performance .site-nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.low-performance .site-nav .nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-secondary);
+  background: var(--nav-bg);
+  backdrop-filter: none;
+}
+
+.low-performance .site-nav .nav-link::before {
+  display: none;
+}
+
+.low-performance .site-nav button.nav-link {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.low-performance .site-nav .nav-link[aria-current="page"],
+.low-performance .site-nav .nav-link:hover {
+  color: var(--text-primary);
+  background: var(--nav-hover);
+}
+
+/* 🎨 HIGH PERFORMANCE - Pulsing RAM Monitor with Particles */
+body:not(.low-performance) .ram-monitor { 
+  color: var(--accent-cyan); 
+  font-size: 13px; 
+  font-weight: 700; 
+  padding: 10px 16px; 
+  border-radius: 14px; 
+  background: linear-gradient(145deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.15));
+  border: 2px solid var(--accent-cyan);
+  white-space: nowrap;
+  box-shadow: var(--glow-cyan);
+  animation: pulse 3s ease-in-out infinite, rainbow-border 6s linear infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .ram-monitor::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, transparent 70%);
+  animation: particle-flow 4s linear infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    box-shadow: var(--glow-cyan);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: var(--glow-purple);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes rainbow-border {
+  0%, 100% { border-color: var(--accent-cyan); }
+  33% { border-color: var(--accent-purple); }
+  66% { border-color: var(--accent-pink); }
+}
+
+@keyframes particle-flow {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ⚡ LOW PERFORMANCE - Simple RAM Monitor */
+.low-performance .ram-monitor {
+  color: var(--accent-cyan);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  white-space: nowrap;
+}
+
+.low-performance .ram-monitor::after {
+  display: none;
+}
+
+/* 🌐 Global HTML & Body Theming */
+html {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* 🎨 Base Body Styles - Works for ALL modes and themes */
+body { 
+  background: var(--bg-primary);
+  color: var(--text-primary); 
+  text-align: center; 
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* 🎨 HIGH PERFORMANCE - Animated Gradient Background with Particles */
+body:not(.low-performance)::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
+  animation: backgroundPulse 10s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes backgroundPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ⚡ LOW PERFORMANCE - No particles effect */
+.low-performance::before {
+  display: none;
+}
+
+/* Layout container with better spacing */
+.container { 
+  max-width: 1100px; 
+  margin: 0 auto; 
+  padding: 16px 20px; 
+}
+
+/* Enhanced app header */
+.app-header { 
+  margin: 12px auto 16px; 
+  position: sticky; 
+  top: 0; 
+  background: var(--nav-bg); 
+  z-index: 5;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+/* Enhanced header bar */
+.header-bar { 
+  display: grid; 
+  grid-template-columns: 1fr auto 1fr; 
+  align-items: center; 
+  gap: 16px;
+  padding: 12px 20px;
+}
+.header-left { 
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Header Logo Styling */
+.header-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body:not(.low-performance) .header-logo:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: var(--glow-cyan);
+}
+
+.low-performance .header-logo {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.low-performance .header-logo:hover {
+  transform: none;
+}
+
+.header-center { 
+  text-align: center;
+  flex: 1;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  font-weight: 500;
+}
+.header-right { 
+  text-align: right; 
+  display: flex; 
+  justify-content: flex-end; 
+  align-items: center; 
+}
+
+/* Enhanced brand elements */
+.brand { 
+  display: flex; 
+  align-items: baseline; 
+  gap: 10px; 
+}
+.brand-title { 
+  font-size: 24px; 
+  font-weight: 800; 
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.badge { 
+  font-size: 12px; 
+  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-red));
+  color: #111; 
+  border-radius: 12px; 
+  padding: 4px 10px; 
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(255, 213, 77, 0.4);
+}
+.byline { 
+  font-size: 12px; 
+  color: var(--text-muted); 
+  margin-top: 4px; 
+}
+
+/* Enhanced clock and greeting */
+.clock { 
+  font-family: "Arial Black", Gadget, sans-serif; 
+  font-size: 16px; 
+  background: linear-gradient(135deg, var(--accent-red), var(--accent-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(255, 51, 102, 0.5));
+}
+.greeting { 
+  font-size: 13px; 
+  color: var(--text-secondary); 
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* Enhanced footer with better visual hierarchy */
+/* 🎨 Enhanced Professional Footer */
+.app-footer { 
+  margin: 48px auto 0; 
+  background: var(--nav-bg);
+  border-top: 3px solid var(--border-secondary);
+  padding: 0;
+  box-shadow: var(--shadow-xl);
+  border-radius: 20px 20px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .app-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink), var(--accent-cyan));
+  background-size: 200% 100%;
+  animation: gradientFlow 5s linear infinite;
+}
+
+.footer-container { 
+  max-width: 1100px; 
+  margin: 0 auto; 
+  padding: 40px 24px 0; 
+}
+
+.footer-content { 
+  display: grid; 
+  grid-template-columns: 1.5fr 1fr 1fr 1fr; 
+  gap: 32px; 
+  margin-bottom: 32px; 
+}
+
+.footer-brand {
+  grid-column: span 1;
+}
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border-secondary);
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-title { 
+  font-size: 22px; 
+  font-weight: 800; 
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 12px 0; 
+  display: flex; 
+  align-items: center; 
+  gap: 10px;
+  filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.3));
+}
+
+.version-badge { 
+  font-size: 12px; 
+  background: linear-gradient(135deg, var(--accent-yellow), var(--accent-red));
+  color: #111; 
+  padding: 4px 10px; 
+  border-radius: 12px; 
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(255, 213, 77, 0.4);
+}
+
+.footer-desc { 
+  font-size: 14px; 
+  color: var(--text-secondary); 
+  margin: 0 0 16px 0; 
+  line-height: 1.6; 
+}
+
+.footer-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+body:not(.low-performance) .stat-item:hover {
+  background: rgba(0, 212, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+.stat-icon {
+  font-size: 18px;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.footer-links { 
+  display: flex; 
+  flex-direction: column;
+  gap: 10px; 
+}
+
+.footer-link { 
+  color: var(--text-secondary); 
+  text-decoration: none; 
+  font-size: 14px; 
+  padding: 6px 0; 
+  border-left: 3px solid transparent;
+  padding-left: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-link .link-icon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.footer-link:hover { 
+  color: var(--accent-cyan);
+  border-left-color: var(--accent-cyan);
+  padding-left: 16px;
+  filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.5));
+}
+
+body:not(.low-performance) .footer-link:hover .link-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.footer-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-features li {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-meta { 
+  font-size: 13px; 
+  color: var(--text-muted); 
+  margin: 4px 0; 
+}
+
+.footer-meta strong { 
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+.footer-creators {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+.footer-creators strong {
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.social-link {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 18px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ✨ Floating animation for social icons */
+body:not(.low-performance) .social-link {
+  animation: float 3s ease-in-out infinite;
+}
+
+body:not(.low-performance) .social-link:nth-child(1) { animation-delay: 0s; }
+body:not(.low-performance) .social-link:nth-child(2) { animation-delay: 0.2s; }
+body:not(.low-performance) .social-link:nth-child(3) { animation-delay: 0.4s; }
+body:not(.low-performance) .social-link:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+body:not(.low-performance) .social-link:hover {
+  background: rgba(0, 212, 255, 0.2);
+  transform: translateY(-6px) scale(1.15) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(0, 212, 255, 0.5), 
+              0 0 20px rgba(0, 240, 255, 0.3);
+  animation: none; /* Stop floating on hover */
+}
+
+.footer-bottom { 
+  text-align: center; 
+  padding: 24px 0; 
+  border-top: 2px solid var(--border-secondary);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.footer-bottom-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.copyright {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  font-weight: 500;
+}
+
+.footer-tagline {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+.footer-tech {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+  opacity: 0.7;
+}
+
+/* Responsive Footer */
+@media (max-width: 968px) {
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  
+  .footer-brand {
+    grid-column: span 2;
+  }
+  
+  .footer-stats {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .footer-brand {
+    grid-column: span 1;
+  }
+  
+  .footer-container {
+    padding: 32px 16px 0;
+  }
+  
+  .footer-stats {
+    justify-content: center;
+  }
+  
+  .footer-social {
+    justify-content: center;
+  }
+}
+
+/* Low Performance Footer Optimizations */
+.low-performance .app-footer::before {
+  display: none;
+}
+
+.low-performance .stat-item:hover,
+.low-performance .social-link:hover,
+.low-performance .footer-link:hover .link-icon {
+  transform: none;
+}
+
+.low-performance .footer-link:hover {
+  padding-left: 12px;
+}
+
+/* 🎨 HIGH PERFORMANCE - Animated Gradient Section Title */
+body:not(.low-performance) .section-title { 
+  margin: 10px 0 14px; 
+  font-size: 22px; 
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-orange) 50%, var(--accent-red) 100%);
+  background-size: 200% 200%;
+  animation: gradientFlow 5s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-weight: 900;
+  filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.6)) drop-shadow(0 0 32px rgba(249, 115, 22, 0.4));
+  position: relative;
+  padding-bottom: 16px;
+}
+
+/* ✨ Gradient divider below section titles */
+body:not(.low-performance) .section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--accent-cyan) 0%, 
+    var(--accent-purple) 33%, 
+    var(--accent-pink) 66%, 
+    transparent 100%);
+  border-radius: 2px;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.5; transform: scaleX(1); }
+  50% { opacity: 1; transform: scaleX(1.05); }
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Section Title */
+.low-performance .section-title {
+  margin: 4px 0 8px;
+  font-size: 18px;
+  color: var(--accent-yellow);
+  font-family: "Arial Black", Gadget, sans-serif;
+  filter: none;
+}
+
+/* 🎨 HIGH PERFORMANCE - Glassmorphism Cards with 3D Hover */
+body:not(.low-performance) .card { 
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border: 2px solid var(--glass-border);
+  border-radius: 20px; 
+  padding: 24px; 
+  margin: 16px auto; 
+  width: min(100%, 1000px); 
+  text-align: left;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(0, 240, 255, 0.05), transparent);
+  transform: rotate(45deg);
+  animation: cardShimmer 6s infinite;
+}
+
+@keyframes cardShimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+body:not(.low-performance) .card:hover {
+  transform: translateY(-8px) scale(1.02) rotateX(3deg);
+  box-shadow: var(--shadow-xl), var(--glow-rainbow);
+  border-color: var(--accent-cyan);
+  border-width: 3px;
+}
+
+/* 🌟 Sparkle effect on hover */
+body:not(.low-performance) .card:hover::after {
+  content: '✨';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  animation: sparkle 1s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sparkle {
+  0%, 100% { 
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Flat Cards */
+.low-performance .card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 10px auto;
+  width: min(100%, 1000px);
+  text-align: left;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.low-performance .card::before {
+  display: none;
+}
+
+/* 🎨 HIGH PERFORMANCE - Enhanced Tool Cards */
+body:not(.low-performance) .tool-card { 
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--blur-md) !important;
+  -webkit-backdrop-filter: var(--blur-md) !important;
+  border: 2px solid var(--glass-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-lg) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+body:not(.low-performance) .tool-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(168, 85, 247, 0.05), transparent);
+  transform: rotate(45deg);
+  animation: cardShimmer 6s infinite;
+}
+
+body:not(.low-performance) .tool-card:hover { 
+  transform: translateY(-6px) scale(1.01) !important;
+  box-shadow: var(--shadow-xl), var(--glow-rainbow) !important;
+  border-color: var(--accent-purple) !important;
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Tool Cards */
+.low-performance .tool-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-card) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.low-performance .tool-card::before {
+  display: none;
+}
+.form-section label { display: inline-block; min-width: 180px; margin: 4px 0; }
+.form-section input, .form-section select, .form-section button { margin: 4px 0; }
+.form-section button { margin-right: 6px; }
+
+/* Quick links collapsible */
+details > summary.section-title { cursor: pointer; list-style: none; }
+details > summary.section-title::-webkit-details-marker { display: none; }
+.ql-body { padding-top: 6px; }
+
+/* Skip link for accessibility */
+.skip-link { position: absolute; left: -999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+.skip-link:focus { left: 12px; top: 12px; width: auto; height: auto; padding: 6px 10px; background: #000; color: #fff; border-radius: 6px; z-index: 1001; }
+
+/* Compact copy actions grid */
+.copy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 12px; align-items: center; }
+.copy-grid label { margin: 0; }
+.copy-grid br { display: none; }
+.copy-grid .copDb { width: 100%; }
+
+/* Tighten table spacing */
+.table2 td, .table2 th { padding: 4px 6px; }
+
+/* Visible focus for keyboard users */
+:where(button, input, select, a):focus-visible {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+/* Reduce shadows for performance */
+.style1, .style3, .copDb { box-shadow: none !important; }
+
+/* Improve contrast of dark-red on black */
+.darkbar { background: #7a0404; color: #fff; }
+
+/* Lightweight buttons used for copy actions */
+/* Lightweight site nav shared by pages */
+.site-nav { position: sticky; top: 0; z-index: 1000; background: var(--bg-secondary); border-bottom: 1px solid var(--border-primary); padding: 6px 10px; display: flex; gap: 10px; }
+.site-nav .nav-link { color: var(--text-secondary); text-decoration: none; font-size: 14px; padding: 4px 8px; border-radius: 6px; }
+.site-nav button.nav-link { cursor: pointer; font-family: inherit; }
+.site-nav .nav-link[aria-current="page"], .site-nav .nav-link:hover { color: var(--text-primary); background: var(--nav-hover); }
+
+/* 🎨 HIGH PERFORMANCE - Interactive Buttons with Ripple Effect */
+body:not(.low-performance) .btn-surface,
+body:not(.low-performance) .style3,
+body:not(.low-performance) .style4,
+body:not(.low-performance) .copDb {
+  color: var(--text-primary);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  border: 2px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .btn-surface::after,
+body:not(.low-performance) .style3::after,
+body:not(.low-performance) .style4::after,
+body:not(.low-performance) .copDb::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(0, 240, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+body:not(.low-performance) .btn-surface:active::after,
+body:not(.low-performance) .style3:active::after,
+body:not(.low-performance) .style4:active::after,
+body:not(.low-performance) .copDb:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+body:not(.low-performance) .btn-surface:hover,
+body:not(.low-performance) .style3:hover,
+body:not(.low-performance) .style4:hover,
+body:not(.low-performance) .copDb:hover { 
+  background: var(--nav-hover);
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan), 
+              inset 0 2px 8px rgba(0, 240, 255, 0.3),
+              0 8px 24px rgba(0, 240, 255, 0.4);
+  transform: translateY(-4px) scale(1.06);
+}
+
+body:not(.low-performance) .btn-surface:active,
+body:not(.low-performance) .style3:active,
+body:not(.low-performance) .style4:active,
+body:not(.low-performance) .copDb:active { 
+  transform: translateY(1px) scale(0.97);
+  box-shadow: inset 0 4px 12px rgba(0, 212, 255, 0.5),
+              0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Buttons */
+.low-performance .btn-surface,
+.low-performance .style3,
+.low-performance .style4,
+.low-performance .copDb {
+  color: var(--text-secondary);
+  background: var(--nav-bg);
+  border: 1px solid var(--border-secondary);
+  backdrop-filter: none;
+}
+
+.low-performance .btn-surface::after,
+.low-performance .style3::after,
+.low-performance .style4::after,
+.low-performance .copDb::after {
+  display: none;
+}
+
+.low-performance .btn-surface:hover,
+.low-performance .style3:hover,
+.low-performance .style4:hover,
+.low-performance .copDb:hover {
+  background: var(--nav-hover);
+  color: var(--text-primary);
+}
+
+/* 🎨 HIGH PERFORMANCE - Enhanced Copy Button */
+body:not(.low-performance) .copDb {
+  display: inline-block;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 14px;
+}
+
+body:not(.low-performance) .copDb { 
+  background: linear-gradient(145deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+  color: var(--text-primary);
+  border: 2px solid var(--accent-cyan);
+}
+
+body:not(.low-performance) .copDb.active { 
+  background: linear-gradient(145deg, rgba(0, 240, 255, 0.25), rgba(168, 85, 247, 0.25));
+  color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+body:not(.low-performance) .copDb:hover {
+  box-shadow: var(--glow-cyan);
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Copy Button */
+.low-performance .copDb {
+  display: inline-block;
+  padding: 10px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.low-performance .copDb {
+  background: var(--nav-bg);
+  color: var(--text-secondary);
+}
+
+.low-performance .copDb.active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* 🎨 HIGH PERFORMANCE - Enhanced Low Banner */
+body:not(.low-performance) .low-banner { 
+  position: sticky; 
+  top: 0; 
+  z-index: 1001; 
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  color: var(--text-secondary); 
+  border-bottom: 2px solid var(--glass-border);
+  padding: 10px 14px; 
+  font-size: 13px;
+  box-shadow: var(--shadow-md);
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Banner */
+.low-performance .low-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+  background: var(--nav-bg);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-secondary);
+  padding: 6px 10px;
+  font-size: 13px;
+  backdrop-filter: none;
+}
+
+/* Compact header button overrides */
+.header-bar .style1 {
+  margin: 0;
+  width: auto;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-left-width: 2px;
+  border-right-width: 2px;
+  display: inline-block;
+}
+
+/* Header bar styling (was .head inline) */
+.head {
+  background: #7a0404;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: Suiss, GE_SS_Two, Roboto, Arial, sans-serif;
+}
+
+/* Small paragraph alignment previously in .pp */
+.pp {
+  text-align: right;
+  font-size: 13px;
+  font-family: Gill Sans, Gill Sans MT, Calibri, Trebuchet MS, sans-serif;
+}
+
+/* 🎨 HIGH PERFORMANCE - Ultra 3D "Start Day!" Button */
+body:not(.low-performance) .style1 {
+  border-radius: 20px;
+  width: 250px;
+  text-align: center;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  border: 0;
+  margin: 30px auto;
+  padding: 18px 28px;
+  background: linear-gradient(145deg, rgba(0, 240, 255, 0.15), rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.15));
+  border: 3px solid var(--accent-yellow);
+  display: block;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(251, 191, 36, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+body:not(.low-performance) .style1::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: rotate(45deg);
+  animation: buttonShine 3s infinite;
+}
+
+@keyframes buttonShine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+body:not(.low-performance) .style1:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+  box-shadow: var(--glow-rainbow);
+  transform: translateY(-6px) scale(1.05) rotateX(5deg);
+  animation: buttonPulse 1s infinite;
+}
+
+@keyframes buttonPulse {
+  0%, 100% { box-shadow: var(--glow-cyan); }
+  50% { box-shadow: var(--glow-purple); }
+}
+
+body:not(.low-performance) .style1:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Primary Button */
+.low-performance .style1 {
+  border-radius: 15px;
+  width: 250px;
+  text-align: center;
+  font-family: "Arial Black", Gadget, sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  border: 0;
+  margin: 30px auto;
+  padding: 15px 20px;
+  background-color: transparent;
+  border-left: 3px solid var(--accent-yellow);
+  border-right: 3px solid var(--accent-yellow);
+  display: block;
+  color: inherit;
+}
+
+.low-performance .style1::before {
+  display: none;
+}
+
+.low-performance .style1:hover {
+  border-left-color: var(--text-primary);
+  border-right-color: var(--text-primary);
+  color: var(--accent-yellow);
+}
+
+/* 🎨 HIGH PERFORMANCE - Enhanced Utility Buttons */
+body:not(.low-performance) .style3,
+body:not(.low-performance) .style4 {
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border: 2px solid var(--accent-yellow);
+  padding: 10px 14px;
+  background: linear-gradient(145deg, rgba(0, 240, 255, 0.1), rgba(168, 85, 247, 0.1));
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  width: 160px;
+  border-radius: 12px;
+  color: var(--text-primary);
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.3);
+}
+
+body:not(.low-performance) .style3:hover,
+body:not(.low-performance) .style4:hover { 
+  color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-3px) scale(1.05);
+}
+
+body:not(.low-performance) .style4:hover { 
+  width: 200px;
+}
+
+/* ⚡ LOW PERFORMANCE - Simple Utility Buttons */
+.low-performance .style3,
+.low-performance .style4 {
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  border-left: 2px solid var(--accent-yellow);
+  border-right: 2px solid var(--accent-yellow);
+  padding: 5px 8px;
+  background-color: transparent;
+  width: 160px;
+  border-radius: 5px;
+  color: inherit;
+  backdrop-filter: none;
+}
+
+.low-performance .style3:hover,
+.low-performance .style4:hover {
+  color: var(--accent-yellow);
+  border-left-color: var(--text-primary);
+  border-right-color: var(--text-primary);
+}
+
+.low-performance .style4:hover {
+  width: 160px;
+}
+
+/* Tables */
+.table {
+  width: 800px;
+  font-size: 14px;
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: 5px;
+}
+.table th h1 { font-weight: bold; font-size: 16px; text-align: center; }
+.table th { font-family: "Arial Black", Gadget, sans-serif; font-size: 18px; border-radius: 10px; }
+.table td { font-family: Arial, Helvetica, sans-serif; font-size: 18px; padding: 5px 0; }
+
+.table2 {
+  width: 100%;
+  font-size: 14px;
+  margin: 0 auto;
+  padding: 10px;
+}
+.table2 th h1 { font-weight: bold; font-size: 16px; text-align: center; }
+.table2 th { font-family: "Arial Black", Gadget, sans-serif; font-size: 14px; padding: 5px; }
+.table2 td { font-family: Arial, Helvetica, sans-serif; font-size: 14px; padding: 5px 0; }
+
+/* Captions and clock */
+.cap { color: #FC3; font-family: "Arial Black", Gadget, sans-serif; font-size: 22px; }
+/* Keep header clock compact */
+#clock { font-family: "Arial Black", Gadget, sans-serif; font-size: 22px; color: #F53; margin-bottom: 0; }
+
+/* visibility helper */
+.hidden { display: none !important; }
+/* Toast notification styling */
+#toast {
+  position: fixed;
+  z-index: 1000;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+#toast.active { opacity: 1; }
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* Mail preview area */
+.mail-preview {
+  max-width: 900px;
+  margin: 24px auto;
+  text-align: left;
+}
+.mail { border-collapse: collapse; width: 100%; }
+.mail caption { text-align: left; }
+.mail .cap1 { margin-bottom: 30px; }
+.mail .cap2 { margin-bottom: 20px; }
+.mail td { border: 0; padding: 6px 8px; }
+.mail .cell { border: 1px solid #000; }
+.mail .bar { background: darkred; color: #fff; font-weight: bold; }
+.mail .bar-edge { background: darkred; color: #fff; font-weight: bold; border-width: 1px; border-style: solid; border-color: #000 #000 #fff #fff; }
+.mail .regards { margin-top: 30px; text-align: left; border: 0 !important; }

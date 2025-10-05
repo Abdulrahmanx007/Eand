@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Open Escaltion.html",
+			"type": "shell",
+			"command": "Start-Process -FilePath \"C:\\SAD\\Escaltion.html\"",
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Open Escaltion.html",
+			"type": "shell",
+			"command": "Start-Process -FilePath \"C:\\SAD\\Escaltion.html\"",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Open Escaltion.html",
+			"type": "shell",
+			"command": "Start-Process -FilePath \"C:\\SAD\\Escaltion.html\"",
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}

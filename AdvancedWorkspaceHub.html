@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace Hub</title>
+    <meta name="description" content="Professional workspace management with advanced tools and modern design">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2300d4ff' /%3E%3Cstop offset='100%25' style='stop-color:%239d4edd' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='%23111' width='192' height='192' rx='24'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='80' font-weight='bold' fill='url(%23grad)'%3EWS%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://contactcentre.etisalat.corp.ae" crossorigin>
+    <link rel="preconnect" href="https://infohub.etisalat.corp.ae" crossorigin>
+    <link rel="preconnect" href="https://webmail.etisalat.corp.ae" crossorigin>
+    <link rel="preconnect" href="https://rpaorchestrator.etisalat.corp.ae:444" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+    <script src="theme.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --dark-bg: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #b4b4b4;
+            --accent-blue: #00d4ff;
+            --accent-purple: #9d4edd;
+            --accent-pink: #ff006e;
+            --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Scoped styles for AdvancedHub specific elements */
+        /* Body styles removed - using global styles.css for theme consistency */
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+                .shape {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+            opacity: 0.1;
+        }
+                /* Low-performance or reduced-motion: disable animations */
+                body.low-performance * { transition: none !important; }
+                body.low-performance .shape { animation: none !important; }
+                body.low-performance .bookmark-card, body.low-performance .tool-card { box-shadow: none !important; }
+                body.low-performance .bookmark-card:hover, body.low-performance .tool-card:hover { transform: none !important; box-shadow: none !important; }
+                body.low-performance .tool-card::before { animation: none !important; opacity: 0 !important; }
+                body.low-performance .main-title { animation: none !important; }
+                body.low-performance .footer, body.low-performance .notification, body.low-performance .tool-card, body.low-performance .bookmark-card { backdrop-filter: none !important; }
+                @media (prefers-reduced-motion: reduce) {
+                    .shape { animation: none !important; }
+                    .bookmark-card:hover { transform: none !important; box-shadow: none !important; }
+                    .tool-card:hover { transform: none !important; }
+                    .tool-card::before { animation: none !important; }
+                }
+                body.low-performance .animated-bg,
+                body.low-performance .floating-shapes { display: none !important; }
+                body.low-performance .tool-card { backdrop-filter: none !important; }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-blue);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            background: var(--accent-purple);
+            top: 70%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            background: var(--accent-pink);
+            top: 50%;
+            left: 80%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Container uses global styles.css definition (max-width: 1100px) for consistency */
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .bookmarks-grid {
+            display: grid;
+            gap: clamp(12px, 2vw, 16px);
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .bookmark-card {
+            position: relative;
+            height: clamp(64px, 8vw, 84px);
+            min-height: 64px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .bookmark-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .bookmark-card:nth-child(2n)::before { background: var(--secondary-gradient); }
+        .bookmark-card:nth-child(3n)::before { background: var(--success-gradient); }
+        .bookmark-card:nth-child(4n)::before { background: var(--warning-gradient); }
+
+        .bookmark-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .bookmark-card:hover::before {
+            opacity: 0.8;
+        }
+
+        .bookmark-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+            transition: color 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 16px;
+        }
+
+        .bookmark-card:hover .bookmark-link {
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .tools-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .calculator-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            width: 100%;
+            margin-bottom: 32px;
+        }
+        .calculator-row .tool-card {
+            flex: 1 1 320px;
+            min-width: 320px;
+            max-width: 420px;
+        }
+
+        @media (max-width: 1100px) {
+            .calculator-row {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .calculator-row .tool-card {
+                max-width: 100%;
+            }
+        }
+        
+
+        /* Dedicated style for main calculators for perfect alignment and size */
+        .tool-card.calculator-card {
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 36px 18px 36px 18px;
+            box-sizing: border-box;
+        }
+        .calculator-content {
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .calculator-card .tool-title {
+            margin-bottom: 32px;
+        }
+        
+        .tool-card.calculator-card .form-group {
+            width: 100%;
+            max-width: 340px;
+        }
+        .tool-card.calculator-card .form-row {
+            justify-content: center;
+        }
+        .tool-card.calculator-card .tool-title {
+            margin-bottom: 28px;
+        }
+        
+
+        .tool-card {
+            margin-bottom: 0;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            border-radius: 24px;
+            border: 1.5px solid var(--card-border);
+        }
+
+        .tool-card.full-width {
+            grid-column: 1 / -1;
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        /* Make calculators look like Activity Logger */
+        .tool-card.calculator-full-width {
+            grid-column: 1 / -1;
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            padding: clamp(20px, 3vw, 30px);
+            min-height: 340px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            border-radius: 24px;
+            border: 1.5px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .calculator-full-width .tool-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .calculator-full-width .form-group {
+            margin-bottom: 15px;
+        }
+        .calculator-full-width .form-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .calculator-full-width .form-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            min-width: 80px;
+        }
+        .calculator-full-width .form-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+
+        .tool-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: clamp(20px, 3vw, 30px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 340px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-light);
+        }
+
+        .tool-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .form-row:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        .form-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .stopwatch-display {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(157, 78, 221, 0.2));
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Courier New', monospace;
+            color: var(--accent-blue);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .textarea {
+            width: 100%;
+            min-height: 120px;
+            max-height: 300px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            line-height: 1.5;
+        }
+
+        .textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .activity-table-container {
+            margin-top: 20px;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #CCCCCC;
+            background: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #333333;
+            font-size: 0.9rem;
+            background: #FFFFFF;
+        }
+
+        .activity-table th {
+            background: #E30613;
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2.5px solid #B8050F;
+            color: #FFFFFF;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .activity-table td {
+            padding: 12px;
+            border-bottom: 1.5px solid #E30613;
+            word-wrap: break-word;
+            max-width: 250px;
+            vertical-align: middle;
+            font-size: 0.98rem;
+        }
+
+        .activity-table tbody tr:hover {
+            background: #ffeaea;
+            transform: scale(1.002);
+            transition: all 0.2s ease;
+        }
+
+        .activity-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+
+        .activity-table tbody tr:nth-child(odd) {
+            background: #f3f3f3;
+        }
+
+        .delete-btn {
+            background: #E30613;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #B8050F;
+            transform: scale(1.05);
+        }
+
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+
+        .empty-table-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #E30613;
+            font-style: italic;
+            background: #fff0f0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--card-border);
+            margin-top: 40px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .footer-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .heart {
+            color: #ff006e;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: var(--text-primary);
+            font-weight: 500;
+            box-shadow: var(--shadow-light);
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            max-width: 320px;
+            word-wrap: break-word;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: var(--success-gradient);
+            border-radius: 12px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* Laptop specific fixes (769px to 1200px) */
+        @media (max-width: 1200px) and (min-width: 769px) {
+            .container {
+                max-width: 1100px;
+                padding: 12px;
+            }
+            .bookmarks-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 12px;
+            }
+            .bookmark-card {
+                height: clamp(60px, 7vw, 76px);
+                min-height: 60px;
+            }
+            .bookmark-link {
+                font-size: 0.93rem;
+            }
+            .logo {
+                width: 70px;
+                height: 70px;
+                top: -6px;
+                right: 10px;
+            }
+            .tools-section {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+            .tool-card {
+                padding: 18px;
+            }
+            .tool-title {
+                font-size: 1.2rem;
+            }
+            .form-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .form-input {
+                flex: 1;
+                min-width: 100px;
+                font-size: 0.85rem;
+            }
+            .form-label {
+                min-width: 90px;
+                font-size: 0.85rem;
+                white-space: nowrap;
+            }
+            .button-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
+            }
+            .btn {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+                min-width: 90px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .bookmarks-grid {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                max-width: 100%;
+            }
+            
+            .header {
+                margin-bottom: 30px;
+            }
+            
+            .logo {
+                position: relative;
+                margin: 0 auto 20px;
+                right: auto;
+                top: auto;
+                display: block;
+                width: 100px;
+                height: 100px;
+            }
+            
+            .bookmarks-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 15px;
+                padding: 0;
+            }
+            
+            .bookmark-card {
+                height: clamp(60px, 14vw, 80px);
+                min-height: 60px;
+            }
+            
+            .bookmark-link {
+                font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+                padding: 0 15px;
+                text-align: center;
+            }
+            
+            .tools-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0;
+            }
+            
+            .tool-card {
+                padding: clamp(15px, 4vw, 25px);
+            }
+            
+            .tool-title {
+                font-size: clamp(1.2rem, 3vw, 1.4rem);
+            }
+            
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                padding: 12px;
+            }
+            
+            .form-label {
+                min-width: auto;
+                align-self: flex-start;
+                font-size: 0.85rem;
+            }
+            
+            .form-input {
+                width: 100%;
+                font-size: 0.85rem;
+            }
+            
+            .button-group {
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.85rem;
+                flex: 1;
+                min-width: 80px;
+            }
+            
+            .stopwatch-display {
+                font-size: clamp(2rem, 8vw, 2.5rem);
+                padding: 15px;
+            }
+            
+            .textarea {
+                min-height: 100px;
+                font-size: 0.85rem;
+            }
+            
+            .notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                border-radius: 8px;
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .bookmarks-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-title {
+                font-size: clamp(2rem, 8vw, 3rem);
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .bookmark-card {
+                height: 70px;
+                min-height: 70px;
+            }
+            
+            .bookmark-link {
+                font-size: 0.9rem;
+            }
+            
+            .tool-card {
+                padding: 15px;
+            }
+            
+            .stopwatch-display {
+                font-size: 1.8rem;
+                padding: 10px;
+            }
+            
+            .form-row {
+                padding: 10px;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.8rem;
+            }
+            
+            .textarea {
+                min-height: 80px;
+                font-size: 0.8rem;
+            }
+            
+            .notification {
+                top: 5px;
+                right: 5px;
+                left: 5px;
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .bookmarks-grid {
+                grid-template-columns: repeat(5, 1fr) !important;
+            }
+            .tools-section {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .bookmarks-grid {
+                grid-template-columns: repeat(5, 1fr) !important;
+            }
+            .tools-section {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success-gradient);
+            color: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .checklist-card {
+            padding: clamp(20px, 3vw, 30px);
+            min-height: 340px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .checklist-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-blue);
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            pointer-events: auto;
+        }
+
+        .checklist-label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            pointer-events: auto;
+        }
+
+        .checklist-item input:checked + .checklist-label {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+    </style>
+    <script>
+      (function(){
+        function notify(){
+          try { if (window.parent) window.parent.postMessage({ type: 'ADV_HUB_READY' }, '*'); } catch(_) {}
+        }
+        window.addEventListener('DOMContentLoaded', notify);
+        window.addEventListener('load', notify);
+        
+        const key = 'perfMode';
+        let mode = 'low';
+        
+        function apply(low){
+          document.documentElement.classList.toggle('low-performance', low);
+          document.body.classList.toggle('low-performance', low);
+          const banner = document.getElementById('lowBanner');
+          if (banner) banner.style.display = low ? 'block' : 'none';
+          const toggle = document.getElementById('perfToggle');
+          if (toggle) toggle.textContent = 'Performance: ' + (low ? 'Low' : 'High');
+        }
+        
+        function setMode(newMode){
+          mode = newMode;
+          localStorage.setItem(key, mode);
+          apply(mode === 'low');
+          if (history.replaceState) {
+            const base = location.href.split('?')[0];
+            history.replaceState(null, '', base);
+          }
+        }
+        
+        function updateRAM(){
+          try {
+            const ramEl = document.getElementById('ramMonitor');
+            if (!ramEl) return;
+            const isLow = document.body.classList.contains('low-performance');
+            const estimated = isLow ? 230 : 480;
+            ramEl.textContent = `RAM: ~${estimated}MB`;
+            ramEl.style.color = isLow ? '#00d4ff' : '#ffd54d';
+          } catch(_){}
+        }
+        
+        function init(){
+          try {
+            const params = new URLSearchParams(window.location.search);
+            const queryLow = params.get('low') === '1';
+            const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const saved = localStorage.getItem(key);
+            mode = saved === 'high' ? 'high' : (saved === 'low' ? 'low' : (queryLow || prefersReduced ? 'low' : 'low'));
+            
+            apply(mode === 'low');
+            updateRAM();
+            setInterval(updateRAM, 3000);
+            
+            const observer = new MutationObserver(updateRAM);
+            observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            
+            const toggle = document.getElementById('perfToggle');
+            if (toggle) {
+              toggle.addEventListener('click', function(){ 
+                setMode(mode === 'low' ? 'high' : 'low'); 
+              });
+            }
+            
+            const disableBtn = document.getElementById('disableLow');
+            if (disableBtn) {
+              disableBtn.addEventListener('click', function(){ setMode('high'); });
+            }
+          } catch(e){ console.error('Init error:', e); }
+        }
+        
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <header class="site-header" role="banner">
+        <div class="site-header-inner">
+            <div class="brand-row">
+                <span class="title-gradient">Workspace Suite</span>
+                <span class="brand-badge">v3.2</span>
+            </div>
+            <nav class="site-nav" aria-label="Site">
+                <a href="Escaltion.html" class="nav-link">Escalation</a>
+                <a href="AdvancedWorkspaceHub.html" class="nav-link" aria-current="page">Advanced Hub</a>
+                <a href="QuickLinks.html" class="nav-link">Quick Links</a>
+                <button id="themeToggle" type="button" class="theme-toggle" title="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-text" style="font-size: 13px;">Dark</span>
+                </button>
+                <button id="perfToggle" type="button" class="nav-link" title="Toggle performance mode">Performance: Low</button>
+                <span id="ramMonitor" class="ram-monitor" title="Estimated RAM usage">RAM: --</span>
+            </nav>
+        </div>
+    </header>
+    <div id="lowBanner" class="low-banner" style="display:none;">
+        Low-performance mode is ON for smoother experience.
+        <button id="disableLow" class="btn-surface" style="margin-left:8px;">Disable</button>
+    </div>
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <div class="container" id="main">
+        <header class="app-header card header-bar">
+            <div class="header-left">
+                <img class="header-logo" src="https://media1.giphy.com/media/ED6jth7NGu7o5RTCnz/giphy.webp" alt="Logo">
+                <div class="brand">
+                    <span class="brand-title">Advanced Workspace Hub</span>
+                    <span class="badge">v3.2</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <p class="subtitle">Professional Management & Productivity Suite</p>
+            </div>
+            <div class="header-right">
+            </div>
+        </header>
+
+        <section class="tools-section">
+        <!-- Verification Q/A Helper + Codes Modal Triggers -->
+        <div style="text-align:center;margin-bottom:18px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button id="openHelperModal" class="btn btn-primary" style="font-size:1.08em;padding:10px 28px;border-radius:8px;">🔎 Verification Q/A Helper</button>
+            <button id="openCodesModal" class="btn btn-secondary" style="font-size:1.08em;padding:10px 20px;border-radius:8px;">🧾 Codes</button>
+        </div>
+        <!-- Modal Structure -->
+        <div id="helperModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);">
+            <div class="modal-content" style="background:#fff;color:#222;max-width:700px;margin:60px auto;padding:32px 28px;border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;max-height:80vh;overflow-y:auto;">
+                <span id="closeHelperModal" style="position:absolute;top:18px;right:22px;font-size:2.1em;cursor:pointer;color:#9d4edd;">&times;</span>
+                <h2 style="color:var(--accent-blue);margin-bottom:18px;">🔎 Verification Q/A Helper</h2>
+                <div style="font-size:1.05em;line-height:1.7;">
+                    <b>What is the last modification/change requested by customer?</b><br>
+                    <span style="color:var(--accent-purple);">Go to <b>360</b> → <b>Recent Requests</b> & <b>Recent Payments</b>. Check the last modification date.</span><br><br>
+                    <b>What is the registered contact email address?</b><br>
+                    <span style="color:var(--accent-purple);">From the left side menu → <b>Contact Email</b>.</span><br><br>
+                    <b>Have you contacted Customer Care in the past 30 days?</b><br>
+                    <span style="color:var(--accent-purple);">Go to <b>Interaction</b> → <b>Customer Journey</b> → check the date table.<br>
+                    Also check <b>Interaction</b> → <b>Account</b> → <b>Channels</b> (check the date, within 7 days).<br>
+                    In <b>Customer Journey</b>, filter <b>Interactions Type</b> to <b>CALLS</b>.</span><br><br>
+                    <b>Have you transferred any credit in the last 7 days?</b><br>
+                    <span style="color:var(--accent-purple);">Go to <b>Billing</b> → <b>Adjustment and Transfers</b> → <b>UBT Details History</b> → Last 7 Days.</span><br><br>
+                    <b>What is the active service or current plan customer is on (Name, Benefits or Rental)?</b><br>
+                    <span style="color:var(--accent-purple);">Go to <b>Profile</b> → <b>Account</b> → <b>Account Services</b>. Check if it's chargeable, one-time, etc.</span><br><br>
+                    <b>What is the remaining amount of Benefits/Allowance?</b><br>
+                    <span style="color:var(--accent-purple);">Go to <b>360</b> → <b>Usage Summary</b> → <b>IN Services</b>. Check remaining benefits/allowance.</span>
+                </div>
+            </div>
+        </div>
+        <!-- Codes Modal -->
+        <div id="codesModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);">
+            <div class="modal-content" style="background:#fff;color:#222;max-width:720px;margin:60px auto;padding:24px;border-radius:18px;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;max-height:80vh;overflow-y:auto;">
+                <span id="closeCodesModal" style="position:absolute;top:18px;right:22px;font-size:2.1em;cursor:pointer;color:#9d4edd;">&times;</span>
+                <h2 style="color:#333;margin-bottom:12px;">🧾 Quick Codes</h2>
+                <div style="display:flex;gap:8px;align-items:center;margin:6px 0 12px;">
+                    <input id="codesSearch" type="text" placeholder="Search codes or names..." style="flex:1;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font-size:0.98em;">
+                    <button id="clearCodesSearch" class="btn btn-secondary" style="padding:8px 12px;border-radius:8px;">Clear</button>
+                </div>
+                <div style="font-size:1.0em;line-height:1.6;">
+                    <div class="code-row" data-code="71461" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>not Authorized AR</strong><span>71461</span>
+                    </div>
+                    <div class="code-row" data-code="71462" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>not Authorizes EN</strong><span>71462</span>
+                    </div>
+                    <div class="code-row" data-code="8009111" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>Enterprise Customers</strong><span>8009111</span>
+                    </div>
+                    <div class="code-row" data-code="8005800" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>smb</strong><span>8005800</span>
+                    </div>
+                    <div class="code-row" data-code="80066600" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>Huawei support</strong><span>80066600</span>
+                    </div>
+                    <div class="code-row" data-code="3137" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>main menu</strong><span>3137</span>
+                    </div>
+                    <div class="code-row" data-code="*33#0000#" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>out going issue</strong><span>*33#0000#</span>
+                    </div>
+                    <div class="code-row" data-code="8006665" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>cancelation</strong><span>8006665</span>
+                    </div>
+                    <div class="code-row" data-code="1661" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>re open complain (answer "No")</strong><span>1661</span>
+                    </div>
+                    <div class="code-row" data-code="*121#" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>BALANCE</strong><span>*121#</span>
+                    </div>
+                    <div class="code-row" data-code="DNCR 1012" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>ANTI SPAM</strong><span>DNCR 1012</span>
+                    </div>
+                    <div class="code-row" data-code="*800#" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>PLAY ON DEMAND / START / STOP (≈5 fils/min)</strong><span>*800#</span>
+                    </div>
+                    <div class="code-row" data-code="*122#" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>USAGE LIMIT INCREASE</strong><span>*122#</span>
+                    </div>
+                    <div class="code-row" data-code="3154" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>3154</strong><span>3154</span>
+                    </div>
+                    <div class="code-row" data-code="800101" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>800101</strong><span>800101</span>
+                    </div>
+                    <div class="code-row" data-code="3154" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>cts</strong><span>3154</span>
+                    </div>
+                    <div class="code-row" data-code="1661" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>1661 No</strong><span>1661</span>
+                    </div>
+                    <div class="code-row" data-code="*101*50#" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>WASEL FLEXI (6 GB)</strong><span>*101*50#</span>
+                    </div>
+                    <div class="code-row" data-code="800102" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>800102 FLEET</strong><span>800102</span>
+                    </div>
+                    <div class="code-row" data-code="3582" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>cancelation Arabic</strong><span>3582</span>
+                    </div>
+                    <div class="code-row" data-code="3583" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>cancelation English</strong><span>3583</span>
+                    </div>
+                    <div class="code-row" data-code="800102" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>fleet</strong><span>800102</span>
+                    </div>
+                    <div class="code-row" data-code="71038" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>shifting Arabic</strong><span>71038</span>
+                    </div>
+                    <div class="code-row" data-code="71037" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>shifting English</strong><span>71037</span>
+                    </div>
+                    <div class="code-row" data-code="*140#" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>allowance</strong><span>*140#</span>
+                    </div>
+                    <div class="code-row" data-code="023014650" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>collection</strong><span>023014650</span>
+                    </div>
+                    <div class="code-row" data-code="*101*3030*2#" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>EVERY Day 1 GB</strong><span>*101*3030*2#</span>
+                    </div>
+                    <div class="code-row" data-code="8006665" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>cancellation number</strong><span>8006665</span>
+                    </div>
+                    <div class="code-row" data-code="71990" style="display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid #eee;border-radius:10px;margin-bottom:8px;cursor:pointer;">
+                        <strong>AVAYA Survey</strong><span>71990</span>
+                    </div>
+                </div>
+                <div style="font-size:0.9em;color:#666;margin-top:8px;">Tip: Type to filter.</div>
+            </div>
+        </div>
+            <div class="calculator-row">
+                <div class="tool-card calculator-card">
+                    <h2 class="tool-title">💰 VAT Calculator (5%)</h2>
+                    <div class="calculator-content">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">Price (No VAT):</label>
+                                <input type="number" class="form-input" id="price-without-vat" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">Price (With VAT):</label>
+                                <input type="number" class="form-input" id="price-with-vat" step="0.01" readonly placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">VAT Amount:</label>
+                                <input type="number" class="form-input" id="vat-amount" step="0.01" readonly placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group" id="vatExplanationContainer" style="display: none; margin-top: 15px;">
+                            <label class="form-label" style="color: var(--accent-blue); font-weight: 600;">Smart Explanation:</label>
+                            <div style="background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; padding: 15px; font-size: 0.9rem; line-height: 1.5; color: var(--text-primary);">
+                                <div id="vatExplanation"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card calculator-card">
+                    <h2 class="tool-title">📅 Prorated Calculator</h2>
+                    <div class="calculator-content">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">Total Price:</label>
+                                <input type="number" class="form-input" id="total-price" step="0.01" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">Days in Month:</label>
+                                <input type="number" class="form-input" id="days-in-month" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">Remaining Days:</label>
+                                <input type="number" class="form-input" id="remaining-days" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">Prorated Price:</label>
+                                <input type="number" class="form-input" id="prorated-price" readonly placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="form-group" id="proratedExplanationContainer" style="display: none; margin-top: 15px;">
+                            <label class="form-label" style="color: var(--accent-purple); font-weight: 600;">Smart Explanation:</label>
+                            <div style="background: rgba(157, 78, 221, 0.08); border: 1px solid rgba(157, 78, 221, 0.2); border-radius: 12px; padding: 15px; font-size: 0.9rem; line-height: 1.5; color: var(--text-primary);">
+                                <div id="proratedExplanation"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-card calculator-card">
+                    <h2 class="tool-title">⏰ Time Widget</h2>
+                    <div class="calculator-content">
+                        <div class="time-widget" id="timeWidget">
+                            <div class="time-display" id="timeDisplay" style="font-size:2.2rem;font-weight:700;text-align:center;"></div>
+                            <div class="time-greeting" id="timeGreeting" style="font-size:1.1rem;text-align:center;margin-top:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="tool-card activity-logger full-width">
+                <h2 class="tool-title">📊 Activity Logger</h2>
+                
+                <!-- Data Entry Form -->
+                <div class="form-group">
+                    <div class="form-row" style="display: flex; gap: 16px;">
+                        <div style="flex:1; min-width: 0; display: flex; flex-direction: column;">
+                            <label class="form-label" for="activity-number">Number:</label>
+                            <input type="text" class="form-input" id="activity-number" placeholder="Enter number">
+                        </div>
+                        <div style="flex:2; min-width: 0; display: flex; flex-direction: column;">
+                            <label class="form-label" for="activity-description">Description:</label>
+                            <input type="text" class="form-input" id="activity-description" placeholder="Enter description">
+                        </div>
+                        <div style="flex:1.5; min-width: 0; display: flex; flex-direction: column;">
+                            <label class="form-label" for="activity-action">Action:</label>
+                            <input type="text" class="form-input" id="activity-action" placeholder="Enter action">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="button-group" style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" id="addActivityBtn">Add Activity</button>
+                    <button class="btn btn-secondary" id="exportCsvBtn">Export to CSV</button>
+                    <button class="btn btn-secondary" id="exportHtmlBtn">Export HTML</button>
+                    <button class="btn btn-danger" id="clearActivityDataBtn">Clear All Data</button>
+                </div>
+                
+                <!-- Data Display Table -->
+                <div class="activity-table-container">
+                    <table class="activity-table" id="activityTable">
+                        <thead>
+                            <tr>
+                                <th>Number</th>
+                                <th>Description</th>
+                                <th>Action</th>
+                                <th>UAE Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTableBody">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tool-card checklist-card full-width">
+                <h2 class="tool-title">📋 Quick Checklist</h2>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="checklistProgress"></div>
+                </div>
+
+                <div class="checklist-items">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step1" class="checklist-checkbox">
+                        <label for="step1" class="checklist-label">Greeting</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step2" class="checklist-checkbox">
+                        <label for="step2" class="checklist-label">Offer Assist</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step3" class="checklist-checkbox">
+                        <label for="step3" class="checklist-label">Inform about Price/VAT/SLA/Details</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step4" class="checklist-checkbox">
+                        <label for="step4" class="checklist-label">Smart CIM</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step5" class="checklist-checkbox">
+                        <label for="step5" class="checklist-label">Summarize</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step6" class="checklist-checkbox">
+                        <label for="step6" class="checklist-label">Offer Assist Again</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step7" class="checklist-checkbox">
+                        <label for="step7" class="checklist-label">Closing</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="step8" class="checklist-checkbox">
+                        <label for="step8" class="checklist-label">Survey</label>
+                    </div>
+                </div>
+
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-primary" id="resetChecklistBtn">Reset Checklist</button>
+                    <button class="btn btn-secondary" id="completeAllBtn">Mark All Complete</button>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <!-- Professional Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section footer-brand">
+                    <h4 class="footer-title">✨ Workspace Suite <span class="version-badge">v3.2</span></h4>
+                    <p class="footer-desc">Professional workspace management optimized for peak performance and productivity</p>
+                    <div class="footer-stats">
+                        <div class="stat-item">
+                            <span class="stat-icon">⚡</span>
+                            <span class="stat-label">Lightning Fast</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🎨</span>
+                            <span class="stat-label">Modern UI</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">📱</span>
+                            <span class="stat-label">PWA Ready</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-section-title">Quick Navigation</h5>
+                    <div class="footer-links">
+                        <a href="Escaltion.html" class="footer-link"><span class="link-icon">🎯</span> Escalation</a>
+                        <a href="AdvancedWorkspaceHub.html" class="footer-link"><span class="link-icon">🔧</span> Advanced Hub</a>
+                        <a href="QuickLinks.html" class="footer-link"><span class="link-icon">🔗</span> Quick Links</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-section-title">Features</h5>
+                    <ul class="footer-features">
+                        <li>🌙 Dark/Light Theme</li>
+                        <li>⚡ Performance Modes</li>
+                        <li>⌨️ Keyboard Shortcuts</li>
+                        <li>💾 Auto-Save Forms</li>
+                        <li>⭐ Favorites System</li>
+                        <li>🔍 Smart Search</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-section-title">About</h5>
+                    <p class="footer-meta"><strong>BATCH 91</strong></p>
+                    <p class="footer-meta">Etisalat Contact Center</p>
+                    <p class="footer-creators">Created by <strong>Basher</strong> & <strong>Abdelrahman Safwat</strong></p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" title="GitHub">💻</a>
+                        <a href="#" class="social-link" title="LinkedIn">💼</a>
+                        <a href="#" class="social-link" title="Email">📧</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p class="copyright">&copy; <span id="footerYear"></span> Workspace Suite. All rights reserved.</p>
+                    <p class="footer-tagline">Built with ❤️ for peak productivity | 2025 Edition</p>
+                    <p class="footer-tech">Powered by Modern Web Technologies</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('footerYear').textContent = new Date().getFullYear();
+    </script>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Modal logic for Verification Q/A Helper
+        document.addEventListener('DOMContentLoaded', function() {
+            var openBtn = document.getElementById('openHelperModal');
+            var modal = document.getElementById('helperModal');
+            var closeBtn = document.getElementById('closeHelperModal');
+            if (openBtn && modal && closeBtn) {
+                openBtn.onclick = function() { modal.style.display = 'block'; };
+                closeBtn.onclick = function() { modal.style.display = 'none'; };
+                window.addEventListener('click', function(event) {
+                    if (event.target === modal) modal.style.display = 'none';
+                });
+            }
+
+            // Codes modal wiring
+            var openCodes = document.getElementById('openCodesModal');
+            var codesModal = document.getElementById('codesModal');
+            var closeCodes = document.getElementById('closeCodesModal');
+            if (openCodes && codesModal && closeCodes) {
+                openCodes.onclick = function() { codesModal.style.display = 'block'; };
+                closeCodes.onclick = function() { codesModal.style.display = 'none'; };
+                window.addEventListener('click', function(event) {
+                    if (event.target === codesModal) codesModal.style.display = 'none';
+                });
+                // Search filtering logic (no copy on click)
+                var searchInput = document.getElementById('codesSearch');
+                var clearBtn = document.getElementById('clearCodesSearch');
+                function normalize(s){ return (s||'').toString().toLowerCase().trim(); }
+                function filterCodes(){
+                    var q = normalize(searchInput.value);
+                    var rows = codesModal.querySelectorAll('.code-row');
+                    rows.forEach(function(row){
+                        var text = normalize(row.textContent);
+                        row.style.display = (q === '' || text.indexOf(q) !== -1) ? 'flex' : 'none';
+                    });
+                }
+                if (searchInput) {
+                    searchInput.addEventListener('input', filterCodes);
+                }
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', function(){
+                        if (!searchInput) return;
+                        searchInput.value = '';
+                        filterCodes();
+                        searchInput.focus();
+                    });
+                }
+            }
+        });
+        // Time Widget logic
+        let currentLang = 'en'; // or 'ar' if you want Arabic
+        function getUAETimeAndGreeting() {
+            const now = new Date();
+            const uaeTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Dubai" }));
+            const hours = uaeTime.getHours();
+            let greeting = "Good day";
+            let timeOfDay = "day";
+            let locale = 'en-US';
+            if (hours >= 5 && hours < 12) {
+                greeting = "Good morning";
+                timeOfDay = "morning";
+            } else if (hours >= 12 && hours < 17) {
+                greeting = "Good afternoon";
+                timeOfDay = "afternoon";
+            } else if (hours >= 17 && hours < 21) {
+                greeting = "Good evening";
+                timeOfDay = "evening";
+            } else {
+                greeting = "Good evening";
+                timeOfDay = "evening";
+            }
+            return {
+                greeting: greeting,
+                timeOfDay: timeOfDay,
+                time: uaeTime.toLocaleTimeString(locale, { hour12: true, hour: 'numeric', minute: '2-digit' }),
+                date: uaeTime.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+            };
+        }
+        function updateTime() {
+            const timeData = getUAETimeAndGreeting();
+            const timeDisplay = document.getElementById('timeDisplay');
+            const timeGreeting = document.getElementById('timeGreeting');
+            if (timeDisplay && timeGreeting) {
+                timeDisplay.textContent = timeData.time;
+                timeGreeting.textContent = `${timeData.greeting} - ${timeData.date.split(',')[0]}`;
+            }
+        }
+        setInterval(updateTime, 1000);
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            initializeDateCalculations();
+        });
+        // Also update Prorated Calculator at midnight
+        setInterval(function() {
+            const now = new Date();
+            if (now.getHours() === 0 && now.getMinutes() === 0) {
+                initializeDateCalculations();
+            }
+        }, 60000);
+        // Enhanced Stopwatch functionality (guarded)
+        let stopwatchInterval;
+        let elapsedTime = 0;
+        let isRunning = false;
+
+        const stopwatchDisplay = document.getElementById('stopwatch');
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const resetButton = document.getElementById('reset');
+
+        if (stopwatchDisplay && startButton && stopButton && resetButton) {
+            function formatTime(ms) {
+                const hours = String(Math.floor(ms / 3600000)).padStart(2, '0');
+                const minutes = String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0');
+                const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+            }
+
+            function updateStopwatch() {
+                elapsedTime += 1000;
+                stopwatchDisplay.textContent = formatTime(elapsedTime);
+            }
+
+            function startStopwatch() {
+                if (!isRunning) {
+                    stopwatchInterval = setInterval(updateStopwatch, 1000);
+                    startButton.textContent = 'Running...';
+                    startButton.style.background = 'var(--secondary-gradient)';
+                    isRunning = true;
+                    showNotification('⏱️ Stopwatch started!');
+                }
+            }
+
+            function stopStopwatch() {
+                clearInterval(stopwatchInterval);
+                startButton.textContent = 'Start';
+                startButton.style.background = 'var(--success-gradient)';
+                isRunning = false;
+                showNotification('⏸️ Stopwatch paused');
+            }
+
+            function resetStopwatch() {
+                clearInterval(stopwatchInterval);
+                elapsedTime = 0;
+                stopwatchDisplay.textContent = formatTime(elapsedTime);
+                startButton.textContent = 'Start';
+                startButton.style.background = 'var(--success-gradient)';
+                isRunning = false;
+                showNotification('🔄 Stopwatch reset');
+            }
+
+            startButton.addEventListener('click', startStopwatch);
+            stopButton.addEventListener('click', stopStopwatch);
+            resetButton.addEventListener('click', resetStopwatch);
+        }
+
+        // VAT Calculator with Smart Auto-Generated Explanations
+        const priceWithoutVATInput = document.getElementById('price-without-vat');
+        const priceWithVATInput = document.getElementById('price-with-vat');
+        const vatAmountInput = document.getElementById('vat-amount');
+        const vatExplanationContainer = document.getElementById('vatExplanationContainer');
+        const vatExplanation = document.getElementById('vatExplanation');
+
+        function calculateVAT() {
+            const priceWithoutVAT = parseFloat(priceWithoutVATInput.value) || 0;
+            const vatAmount = priceWithoutVAT * 0.05;
+            const priceWithVAT = priceWithoutVAT + vatAmount;
+            
+            priceWithVATInput.value = priceWithVAT.toFixed(2);
+            vatAmountInput.value = vatAmount.toFixed(2);
+
+            // Auto-generate smart explanation
+            if (priceWithoutVAT > 0) {
+                generateSmartVATExplanation(priceWithoutVAT, vatAmount, priceWithVAT);
+            } else {
+                vatExplanationContainer.style.display = 'none';
+            }
+        }
+
+        function typeWriter(element, text, speed = 30) {
+            element.innerHTML = '';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Word-by-word typing effect for professional explanations
+        function typeWriterWordByWord(element, html, speed) {
+            element.innerHTML = '';
+            // Improved tokenization: keep HTML tags, split by space but preserve punctuation
+            const tokens = [];
+            let buffer = '';
+            let inTag = false;
+            for (let i = 0; i < html.length; i++) {
+                const char = html[i];
+                if (char === '<') inTag = true;
+                if (inTag) buffer += char;
+                else if (char === ' ') {
+                    if (buffer) tokens.push(buffer);
+                    buffer = '';
+                } else if (char === '>' && inTag) {
+                    buffer += char;
+                    tokens.push(buffer);
+                    buffer = '';
+                    inTag = false;
+                } else {
+                    buffer += char;
+                }
+            }
+            if (buffer) tokens.push(buffer);
+            let idx = 0;
+            function type() {
+                if (idx < tokens.length) {
+                    element.innerHTML += tokens[idx] + (tokens[idx].endsWith('>') ? '' : ' ');
+                    idx++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        function generateSmartVATExplanation(basePrice, vatAmount, totalPrice) {
+            const explanationVariations = [
+                `Let me explain your bill:
+<br><b>Base Price</b>: This is the price of your package before tax (<b>${basePrice.toFixed(2)} AED</b>).
+<br><b>VAT Amount</b>: The UAE government requires a 5% Value Added Tax, which is <b>${vatAmount.toFixed(2)} AED</b>.
+<br><b>Total Price</b>: This is the total you pay, including VAT (<b>${totalPrice.toFixed(2)} AED</b>). If you have any questions, I am happy to explain further.`,
+                `Here is a breakdown for you:
+<br><b>Base Price</b>: The cost of your package before VAT (<b>${basePrice.toFixed(2)} AED</b>).
+<br><b>VAT Amount</b>: 5% tax required by UAE law (<b>${vatAmount.toFixed(2)} AED</b>).
+<br><b>Total Price</b>: The final amount including VAT (<b>${totalPrice.toFixed(2)} AED</b>). Please let me know if you need more details.`,
+                `To clarify:
+<br><b>Base Price</b> is the original price (<b>${basePrice.toFixed(2)} AED</b>).
+<br><b>VAT Amount</b> is the 5% tax added (<b>${vatAmount.toFixed(2)} AED</b>).
+<br><b>Total Price</b> is what you pay in total (<b>${totalPrice.toFixed(2)} AED</b>). I am here to answer any questions.`,
+                `Your bill includes:
+<br><b>Base Price</b>: The price before VAT (<b>${basePrice.toFixed(2)} AED</b>).
+<br><b>VAT Amount</b>: 5% VAT as per UAE law (<b>${vatAmount.toFixed(2)} AED</b>).
+<br><b>Total Price</b>: The total including VAT (<b>${totalPrice.toFixed(2)} AED</b>). If you need more details, I am happy to assist.`,
+                `For your reference:
+<br><b>Base Price</b>: Price before tax (<b>${basePrice.toFixed(2)} AED</b>).
+<br><b>VAT Amount</b>: 5% VAT (<b>${vatAmount.toFixed(2)} AED</b>).
+<br><b>Total Price</b>: Amount you pay including VAT (<b>${totalPrice.toFixed(2)} AED</b>). Please let me know if you have any questions.`
+            ];
+            const randomExplanation = explanationVariations[Math.floor(Math.random() * explanationVariations.length)];
+            vatExplanationContainer.style.display = 'block';
+            vatExplanationContainer.style.opacity = '0';
+            setTimeout(() => {
+                vatExplanationContainer.style.transition = 'opacity 0.3s ease';
+                vatExplanationContainer.style.opacity = '1';
+                typeWriterWordByWord(vatExplanation, randomExplanation, 25);
+            }, 100);
+        }
+
+        priceWithoutVATInput.addEventListener('input', calculateVAT);
+
+        // Prorated Calculator
+    const totalPriceInput = document.getElementById('total-price');
+    const daysInMonthInput = document.getElementById('days-in-month');
+    const remainingDaysInput = document.getElementById('remaining-days');
+    const proratedPriceInput = document.getElementById('prorated-price');
+    const proratedExplanationContainer = document.getElementById('proratedExplanationContainer');
+    const proratedExplanation = document.getElementById('proratedExplanation');
+
+        function updateProratedCalculations() {
+            const totalPrice = parseFloat(totalPriceInput.value) || 0;
+            const daysInMonth = parseInt(daysInMonthInput.value) || 1;
+            const remainingDays = parseInt(remainingDaysInput.value) || 0;
+            const proratedPrice = (totalPrice / daysInMonth) * remainingDays;
+            proratedPriceInput.value = proratedPrice.toFixed(2);
+
+            // Smart Explanation logic with word-by-word typing
+            const explanationVariations = [
+                `Let me explain each part of your bill:
+<br><b>Total Price</b>: This is the regular monthly price for your package, which is <b>${totalPrice.toFixed(2)} AED</b>.
+<br><b>Remaining Days</b>: These are the days left in the current month for which you will be billed, which is <b>${remainingDays}</b> days.
+<br><b>Prorated Price</b>: This is the amount you pay for just the remaining days this month, which is <b>${proratedPrice.toFixed(2)} AED</b>. Next month, you will pay the full monthly price. If you have any questions, I am happy to explain further.`,
+                `Here is a breakdown for you:
+<br><b>Total Price</b>: The standard monthly cost of your package (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b>: The number of days you will use the service this month (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b>: The charge for just those days (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, you will be billed the full monthly price.`,
+                `To clarify:
+<br><b>Total Price</b> is your usual monthly fee (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b> is how many days are left in the month (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b> is what you pay for those days only (<b>${proratedPrice.toFixed(2)} AED</b>). Full billing starts next month.`,
+                `Your bill includes:
+<br><b>Total Price</b>: The monthly package price (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b>: Days left in the month (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b>: The amount for just those days (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, you pay the full monthly price.`,
+                `For your reference:
+<br><b>Total Price</b>: Monthly cost (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b>: Days you will be billed for (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b>: Your charge for this month (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, the full monthly price applies.`
+            ];
+            if (totalPrice > 0) {
+                const randomExplanation = explanationVariations[Math.floor(Math.random() * explanationVariations.length)];
+                proratedExplanation.innerHTML = '';
+                proratedExplanationContainer.style.display = 'block';
+                proratedExplanationContainer.style.opacity = '0';
+                setTimeout(() => {
+                    proratedExplanationContainer.style.transition = 'opacity 0.3s ease';
+                    proratedExplanationContainer.style.opacity = '1';
+                    typeWriterWordByWord(proratedExplanation, randomExplanation, 25);
+                }, 100);
+            } else {
+                proratedExplanation.innerHTML = '';
+                proratedExplanationContainer.style.display = 'none';
+            }
+        }
+        
+
+        function initializeDateCalculations() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const currentDay = today.getDate();
+            const remainingDays = daysInMonth - currentDay + 1;
+
+            daysInMonthInput.value = daysInMonth;
+            remainingDaysInput.value = remainingDays;
+            updateProratedCalculations();
+        }
+
+        totalPriceInput.addEventListener('input', updateProratedCalculations);
+
+        // Activity Logger functionality
+        // Initialize with some demo data to show persistence
+        let activityData = [];
+        const activityNumberInput = document.getElementById('activity-number');
+        const activityDescriptionInput = document.getElementById('activity-description');
+        const activityActionInput = document.getElementById('activity-action');
+        const activityDateTimeInput = document.getElementById('activity-datetime');
+        const addActivityBtn = document.getElementById('addActivityBtn');
+        const exportCsvBtn = document.getElementById('exportCsvBtn');
+        const exportHtmlBtn = document.getElementById('exportHtmlBtn');
+        const clearActivityDataBtn = document.getElementById('clearActivityDataBtn');
+        const activityTableBody = document.getElementById('activityTableBody');
+
+        // Get UAE Date & Time
+        function getUaeDateTime() {
+            const now = new Date();
+            return now.toLocaleString('en-AE', {
+                timeZone: 'Asia/Dubai',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+        }
+
+        // Update date/time field automatically
+        function updateDateTime() {
+            if (activityDateTimeInput) {
+                activityDateTimeInput.value = getUaeDateTime();
+            }
+        }
+
+        // Render activity table
+        function renderActivityTable() {
+            activityTableBody.innerHTML = '';
+            if (activityData.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="4" class="empty-table-message">
+                        📋 No activities recorded yet. Add your first activity above!
+                    </td>
+                `;
+                activityTableBody.appendChild(emptyRow);
+                return;
+            }
+            activityData.forEach((activity) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${escapeHtml(activity.number)}</strong></td>
+                    <td>${escapeHtml(activity.description)}</td>
+                    <td>${escapeHtml(activity.action)}</td>
+                    <td>${escapeHtml(activity.dateTime)}</td>
+                `;
+                activityTableBody.appendChild(row);
+            });
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+
+
+        // Add activity
+        function addActivity() {
+            const number = activityNumberInput.value.trim();
+            const description = activityDescriptionInput.value.trim();
+            const action = activityActionInput.value.trim();
+            const dateTime = getUaeDateTime();
+
+            // Validation
+            if (!number || !description || !action) {
+                showNotification('❌ Please fill all fields!');
+                return;
+            }
+
+            // Create new activity object
+            const newActivity = {
+                number: number,
+                description: description,
+                action: action,
+                dateTime: dateTime
+            };
+
+            // Add to array
+            activityData.push(newActivity);
+
+            // Note: Data persists in memory until page refresh or manual clearing
+            // No localStorage used as it's not supported in artifacts
+
+            // Update table
+            renderActivityTable();
+
+            // Clear input fields
+            activityNumberInput.value = '';
+            activityDescriptionInput.value = '';
+            activityActionInput.value = '';
+            updateDateTime();
+
+            showNotification('✅ Activity added successfully!');
+        }
+
+        // Export to CSV
+        function exportToCsv() {
+            if (activityData.length === 0) {
+                showNotification('❌ No data to export!');
+                return;
+            }
+
+            // CSV header with BOM for Excel compatibility
+            let csvContent = "\uFEFFNumber,Description,Action,UAE Date & Time\n";
+
+            // Add data rows with proper escaping
+            activityData.forEach((activity, index) => {
+                const row = [
+                    `"${activity.number.replace(/"/g, '""')}"`,
+                    `"${activity.description.replace(/"/g, '""')}"`,
+                    `"${activity.action.replace(/"/g, '""')}"`,
+                    `"${activity.dateTime.replace(/"/g, '""')}"`
+                ].join(',');
+                csvContent += row + "\n";
+            });
+
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            // Generate filename with current date and record count
+            const currentDate = new Date().toISOString().slice(0, 10);
+            const filename = `activities_${currentDate}_${activityData.length}_records.csv`;
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Clean up
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 1000);
+
+            showNotification(`📥 CSV exported: ${activityData.length} records saved to ${filename}`);
+        }
+
+        // Export to HTML Report (styled)
+        function exportToHtml() {
+            if (activityData.length === 0) {
+                showNotification('❌ No data to export!');
+                return;
+            }
+
+            function escapeHtmlReport(text) {
+                return String(text)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            const uaeDate = new Date().toLocaleString('en-AE', {
+                timeZone: 'Asia/Dubai',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+
+            const rows = activityData.map(a => `
+                <tr>
+                    <td><strong>${escapeHtmlReport(a.number)}</strong></td>
+                    <td>${escapeHtmlReport(a.description)}</td>
+                    <td>${escapeHtmlReport(a.action)}</td>
+                    <td>${escapeHtmlReport(a.dateTime)}</td>
+                </tr>`).join('');
+
+                        const reportHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Activity Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        :root {
+            --header: #E30613;
+            --headerDark: #B8050F;
+            --accentBlue: #00d4ff;
+            --accentPurple: #9d4edd;
+        }
+        * { box-sizing: border-box; }
+        body { margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, 'Noto Sans', Arial, sans-serif; background:#fff; color:#222; }
+        .report { max-width: 980px; margin: 24px auto; padding: 16px; }
+        .report-header { display:flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--header); padding-bottom: 10px; margin-bottom: 16px; }
+        .report-header h1 { margin:0; font-size: 1.6rem; color: var(--header); }
+        .report-header .meta { text-align: right; color:#444; }
+        .chip { display:inline-block; padding:6px 10px; border-radius:999px; background:#f3f3f3; border:1px solid #e0e0e0; font-weight:600; }
+        .table-wrap { overflow-x:auto; margin-top: 8px; }
+        table { width:100%; border-collapse: collapse; }
+        thead th { background: var(--header); color:#fff; padding:12px; text-align:left; border-bottom:2px solid var(--headerDark); }
+        tbody td { padding:10px 12px; border-bottom:1px solid #eee; }
+        tbody tr:nth-child(odd) { background:#fafafa; }
+        .summary { margin: 14px 0; }
+        .footer { margin-top: 18px; color:#666; font-size: .9rem; text-align:center; }
+    </style>
+    <!-- Modal content continues in same body context -->
+        <div class="report">
+            <div class="report-header">
+                <h1>Activity Report</h1>
+                <div class="meta">
+                    <div>Date: ${uaeDate}</div>
+                    <div>Total Records: ${activityData.length}</div>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                            <th>UAE Date &amp; Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            </div>
+            <div class="summary">
+                <div class="chip">Records: ${activityData.length}</div>
+            </div>
+            <div class="footer">Generated by Advanced Workspace Hub 2025</div>
+        </div>
+    </body>
+    </html>`;
+
+            const blob = new Blob([reportHtml], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const currentDate = new Date();
+            const isoDate = currentDate.toISOString().slice(0, 10);
+            const timePart = currentDate.toTimeString().slice(0,8).replace(/:/g, '');
+            const filename = `activities_report_${isoDate}_${timePart}_${activityData.length}_records.html`;
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            showNotification(`📄 HTML report exported: ${activityData.length} records saved to ${filename}`);
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm('هل أنت متأكد من حذف جميع بيانات الأنشطة؟\nAre you sure you want to clear all activity data?')) {
+                activityData = [];
+                renderActivityTable();
+                showNotification('🗑️ جميع بيانات الأنشطة تم مسحها! All activity data cleared!');
+            }
+        }
+
+        // Load saved data on page load
+        function loadActivityData() {
+            // In Claude.ai artifacts, localStorage is not supported
+            // Data persists in memory during the session
+            // Demo data is pre-loaded to show functionality
+            renderActivityTable();
+        }
+
+        // Event listeners
+        addActivityBtn.addEventListener('click', addActivity);
+        exportCsvBtn.addEventListener('click', exportToCsv);
+        exportHtmlBtn.addEventListener('click', exportToHtml);
+        clearActivityDataBtn.addEventListener('click', clearAllData);
+
+        // Update date/time every second
+        setInterval(updateDateTime, 1000);
+
+        // Initialize
+        updateDateTime();
+        loadActivityData();
+
+        // Notification system
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Day progress bar
+        function updateDayProgress() {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            
+            const totalMinutes = (endOfDay - startOfDay) / (1000 * 60);
+            const passedMinutes = (now - startOfDay) / (1000 * 60);
+            const progress = (passedMinutes / totalMinutes) * 100;
+            
+            const dayProgressElement = document.getElementById('dayProgress');
+            if (dayProgressElement) {
+                dayProgressElement.style.width = `${progress}%`;
+            }
+        }
+
+        // Enhanced bookmark interaction
+        document.querySelectorAll('.bookmark-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Add ripple effect
+                const ripple = document.createElement('div');
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.6);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        addActivity();
+                        break;
+                    case 'e':
+                        e.preventDefault();
+                        exportToCsv();
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        if (isRunning) {
+                            stopStopwatch();
+                        } else {
+                            startStopwatch();
+                        }
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        resetStopwatch();
+                        break;
+                }
+            }
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Initialize everything on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDateCalculations();
+            updateDayProgress();
+            // Attach delete button event delegation after DOM is ready
+            activityTableBody.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('delete-btn')) {
+                    const idx = e.target.getAttribute('data-index');
+                    if (idx !== null) {
+                        deleteActivity(Number(idx));
+                    }
+                }
+            });
+            // Update day progress every minute
+            setInterval(updateDayProgress, 60000);
+            // Show welcome notification with data persistence info
+            setTimeout(() => {
+                showNotification('🚀 Welcome!');
+            }, 1000);
+
+            // Quick Checklist functionality - initialized after DOM ready
+            const checklistCheckboxes = document.querySelectorAll('.checklist-checkbox');
+            const checklistProgress = document.getElementById('checklistProgress');
+            const resetChecklistBtn = document.getElementById('resetChecklistBtn');
+            const completeAllBtn = document.getElementById('completeAllBtn');
+
+            function updateChecklistProgress() {
+                const checked = document.querySelectorAll('.checklist-checkbox:checked').length;
+                const total = checklistCheckboxes.length;
+                const progress = (checked / total) * 100;
+                checklistProgress.style.width = `${progress}%`;
+                if (progress === 100) {
+                    showNotification('✅ Checklist completed!');
+                }
+            }
+
+            function resetChecklist() {
+                checklistCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                updateChecklistProgress();
+                showNotification('🔄 Checklist reset');
+            }
+
+            function completeAllChecklist() {
+                checklistCheckboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                updateChecklistProgress();
+                showNotification('🎉 All steps marked complete!');
+            }
+
+            checklistCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateChecklistProgress);
+            });
+
+            resetChecklistBtn.addEventListener('click', resetChecklist);
+            completeAllBtn.addEventListener('click', completeAllChecklist);
+
+            // Initial progress update
+            updateChecklistProgress();
+        });
+
+        // Add some interactive features
+        let clickCount = 0;
+        document.querySelector('.main-title').addEventListener('click', function() {
+            clickCount++;
+            if (clickCount >= 5) {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'gradientShift 2s ease infinite';
+                }, 10);
+                showNotification('🎉 Easter egg activated!');
+                clickCount = 0;
+            }
+        });
+
+        // Enhanced form interactions
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.boxShadow = '0 5px 20px rgba(0, 212, 255, 0.2)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+                this.parentElement.style.boxShadow = 'none';
+            });
+        });
+
+        // Dynamic theme based on time of day
+        function updateThemeBasedOnTime() {
+            const hour = new Date().getHours();
+            const root = document.documentElement;
+            
+            if (hour >= 6 && hour < 12) {
+                // Morning theme
+                root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)');
+            } else if (hour >= 12 && hour < 18) {
+                // Afternoon theme
+                root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)');
+            } else if (hour >= 18 && hour < 22) {
+                // Evening theme
+                root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)');
+            } else {
+                // Night theme (default)
+                root.style.setProperty('--primary-gradient', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+            }
+        }
+
+        // Initialize theme
+        updateThemeBasedOnTime();
+        
+        // Update theme every hour
+        setInterval(updateThemeBasedOnTime, 3600000);
+
+        // Performance monitoring
+        function logPerformance() {
+            if (performance.timing) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`🚀 Page loaded in ${loadTime}ms`);
+            }
+        }
+
+        window.addEventListener('load', logPerformance);
+
+        // Add context menu for advanced features
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.classList.contains('bookmark-card')) {
+                e.preventDefault();
+                showNotification('🔧 Right-click features coming soon!');
+            }
+        });
+
+        // Responsive design adjustments
+        function handleResize() {
+            const width = window.innerWidth;
+            const bookmarksGrid = document.querySelector('.bookmarks-grid');
+            
+            if (width <= 480) {
+                bookmarksGrid.style.gridTemplateColumns = '1fr';
+            } else if (width <= 768) {
+                bookmarksGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            } else if (width <= 1024) {
+                bookmarksGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            } else {
+                bookmarksGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(260px, 1fr))';
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial call
+    </script>
+
+</body>
+<!-- End of main HTML document -->
+</html>

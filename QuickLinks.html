@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Links - Workspace Suite</title>
+    <meta name="description" content="Centralized directory of essential tools and resources for Etisalat Contact Center">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2300d4ff' /%3E%3Cstop offset='100%25' style='stop-color:%239d4edd' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='%23111' width='192' height='192' rx='24'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='80' font-weight='bold' fill='url(%23grad)'%3EWS%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+    <script src="theme.js"></script>
+    <style>
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .link-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 12px 16px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            color: inherit;
+            position: relative;
+        }
+        .link-card-content {
+            flex: 1;
+        }
+        .link-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+        }
+        .link-card .icon {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+        .link-card .title {
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+        }
+        .link-card .url {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+        .fav-btn {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            opacity: 0.3;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .fav-btn:hover {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        .fav-btn.favorited {
+            opacity: 1;
+        }
+        .favorites-section {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1) 0%, rgba(157,74,221,0.1) 100%);
+            border: 2px solid rgba(0,212,255,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        .favorites-section .category-title {
+            color: #ffd54d;
+            border-bottom-color: rgba(255,213,77,0.3);
+        }
+        .empty-favorites {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+            font-style: italic;
+        }
+        .link-status {
+            font-size: 10px;
+            margin-left: 6px;
+            opacity: 0.8;
+        }
+        .link-status.online {
+            color: #4ade80;
+        }
+        .link-status.offline {
+            color: #f87171;
+        }
+        .link-status.slow {
+            color: #fbbf24;
+        }
+        .link-status.checking {
+            color: #888;
+        }
+        .health-check-toggle {
+            background: var(--nav-bg);
+            border: 1px solid var(--border-secondary);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            margin: 10px auto;
+            display: block;
+        }
+        .health-check-toggle:hover {
+            background: var(--nav-hover);
+        }
+        .health-check-toggle.active {
+            background: var(--accent-cyan);
+            color: #111;
+            border-color: var(--accent-cyan);
+        }
+        .category-section {
+            margin: 30px 0;
+        }
+        .category-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #00d4ff;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(0,212,255,0.3);
+        }
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 12px 20px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        .search-box:focus {
+            outline: 2px solid #00d4ff;
+            background: rgba(255,255,255,0.06);
+        }
+        .low-performance .link-card {
+            transition: none;
+            transform: none !important;
+        }
+        .stats {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+    </style>
+    <script>
+      (function(){
+        const key = 'perfMode';
+        let mode = 'low';
+        
+        function apply(low){
+          document.documentElement.classList.toggle('low-performance', low);
+          document.body.classList.toggle('low-performance', low);
+          const banner = document.getElementById('lowBanner');
+          if (banner) banner.style.display = low ? 'block' : 'none';
+          const toggle = document.getElementById('perfToggle');
+          if (toggle) toggle.textContent = 'Performance: ' + (low ? 'Low' : 'High');
+        }
+        
+        function setMode(newMode){
+          mode = newMode;
+          localStorage.setItem(key, mode);
+          apply(mode === 'low');
+        }
+        
+        function updateRAM(){
+          try {
+            const ramEl = document.getElementById('ramMonitor');
+            if (!ramEl) return;
+            const isLow = document.body.classList.contains('low-performance');
+            const estimated = isLow ? 180 : 320;
+            ramEl.textContent = `RAM: ~${estimated}MB`;
+            ramEl.style.color = isLow ? '#00d4ff' : '#ffd54d';
+          } catch(_){}
+        }
+        
+        function init(){
+          try {
+            const saved = localStorage.getItem(key);
+            const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            mode = saved === 'high' ? 'high' : (saved === 'low' ? 'low' : (prefersReduced ? 'low' : 'low'));
+            
+            apply(mode === 'low');
+            updateRAM();
+            setInterval(updateRAM, 3000);
+            
+            const observer = new MutationObserver(updateRAM);
+            observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            
+            const toggle = document.getElementById('perfToggle');
+            if (toggle) {
+              toggle.addEventListener('click', function(){ 
+                setMode(mode === 'low' ? 'high' : 'low'); 
+              });
+            }
+            
+            const disableBtn = document.getElementById('disableLow');
+            if (disableBtn) {
+              disableBtn.addEventListener('click', function(){ setMode('high'); });
+            }
+            
+            // Search functionality
+            const searchBox = document.getElementById('searchBox');
+            if (searchBox) {
+              searchBox.addEventListener('input', function(e){
+                const query = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.link-card');
+                const sections = document.querySelectorAll('.category-section');
+                
+                cards.forEach(card => {
+                  const text = card.textContent.toLowerCase();
+                  card.style.display = text.includes(query) ? 'flex' : 'none';
+                });
+                
+                // Hide empty sections
+                sections.forEach(section => {
+                  const visibleCards = section.querySelectorAll('.link-card[style*="flex"]');
+                  section.style.display = visibleCards.length > 0 ? 'block' : 'none';
+                });
+              });
+            }
+            
+            // Favorites system
+            setupFavorites();
+            
+            // Link Health Checker
+            setupLinkHealthChecker();
+          } catch(e){ console.error('Init error:', e); }
+        }
+        
+        function setupFavorites() {
+          const FAV_KEY = 'quickLinksFavorites';
+          
+          // Get favorites from localStorage
+          function getFavorites() {
+            try {
+              return JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+            } catch(e) {
+              return [];
+            }
+          }
+          
+          // Save favorites to localStorage
+          function saveFavorites(favs) {
+            localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+          }
+          
+          // Toggle favorite
+          function toggleFavorite(url, title, icon) {
+            const favs = getFavorites();
+            const index = favs.findIndex(f => f.url === url);
+            
+            if (index > -1) {
+              favs.splice(index, 1);
+            } else {
+              favs.push({ url, title, icon });
+            }
+            
+            saveFavorites(favs);
+            renderFavorites();
+            updateFavoriteButtons();
+          }
+          
+          // Render favorites section
+          function renderFavorites() {
+            const favs = getFavorites();
+            let favSection = document.getElementById('favoritesSection');
+            
+            if (favs.length === 0) {
+              if (favSection) favSection.remove();
+              return;
+            }
+            
+            if (!favSection) {
+              favSection = document.createElement('section');
+              favSection.id = 'favoritesSection';
+              favSection.className = 'favorites-section';
+              
+              const container = document.querySelector('.container');
+              const stats = document.querySelector('.stats');
+              container.insertBefore(favSection, stats);
+            }
+            
+            let html = '<h2 class="category-title">⭐ Favorites</h2><div class="links-grid">';
+            
+            favs.forEach(fav => {
+              html += `
+                <a href="${fav.url}" target="_blank" class="link-card">
+                  <div class="link-card-content">
+                    <div class="title"><span class="icon">${fav.icon}</span>${fav.title}</div>
+                    <div class="url">${fav.url}</div>
+                  </div>
+                  <button class="fav-btn favorited" data-url="${fav.url}" title="Remove from favorites">⭐</button>
+                </a>
+              `;
+            });
+            
+            html += '</div>';
+            favSection.innerHTML = html;
+            
+            // Re-attach favorite button listeners
+            favSection.querySelectorAll('.fav-btn').forEach(attachFavListener);
+          }
+          
+          // Update favorite button states
+          function updateFavoriteButtons() {
+            const favs = getFavorites();
+            const favUrls = favs.map(f => f.url);
+            
+            document.querySelectorAll('.fav-btn').forEach(btn => {
+              const url = btn.getAttribute('data-url');
+              if (favUrls.includes(url)) {
+                btn.classList.add('favorited');
+                btn.textContent = '⭐';
+                btn.title = 'Remove from favorites';
+              } else {
+                btn.classList.remove('favorited');
+                btn.textContent = '☆';
+                btn.title = 'Add to favorites';
+              }
+            });
+          }
+          
+          // Attach click listener to favorite button
+          function attachFavListener(btn) {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              const url = this.getAttribute('data-url');
+              const card = this.closest('.link-card');
+              const title = card.querySelector('.title').textContent.trim();
+              const icon = card.querySelector('.icon').textContent.trim();
+              
+              toggleFavorite(url, title, icon);
+            });
+          }
+          
+          // Initialize
+          renderFavorites();
+          
+          // Add favorite buttons to all link cards
+          document.querySelectorAll('.link-card').forEach(card => {
+            if (card.querySelector('.fav-btn')) return; // Already has button
+            
+            const url = card.getAttribute('href');
+            const title = card.querySelector('.title').textContent.trim();
+            const icon = card.querySelector('.icon').textContent.trim();
+            
+            // Restructure card content
+            const content = card.innerHTML;
+            card.innerHTML = `
+              <div class="link-card-content">${content}</div>
+              <button class="fav-btn" data-url="${url}" title="Add to favorites">☆</button>
+            `;
+          });
+          
+          // Attach listeners
+          document.querySelectorAll('.fav-btn').forEach(attachFavListener);
+          updateFavoriteButtons();
+        }
+        
+        // Link Health Checker System
+        function setupLinkHealthChecker() {
+          const HEALTH_KEY = 'linkHealthCache';
+          const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+          let isChecking = false;
+          
+          // Get cached health data
+          function getHealthCache() {
+            try {
+              const cached = localStorage.getItem(HEALTH_KEY);
+              if (!cached) return {};
+              const data = JSON.parse(cached);
+              // Check if cache is still valid
+              if (Date.now() - data.timestamp > CACHE_DURATION) {
+                return {};
+              }
+              return data.health || {};
+            } catch(e) {
+              return {};
+            }
+          }
+          
+          // Save health data to cache
+          function saveHealthCache(healthData) {
+            try {
+              localStorage.setItem(HEALTH_KEY, JSON.stringify({
+                timestamp: Date.now(),
+                health: healthData
+              }));
+            } catch(e) {
+              console.error('Failed to cache health data:', e);
+            }
+          }
+          
+          // Check a single link health
+          async function checkLink(url) {
+            const startTime = Date.now();
+            try {
+              // Use fetch with mode: 'no-cors' to avoid CORS issues
+              // This won't give us status codes but will tell us if reachable
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+              
+              await fetch(url, { 
+                method: 'HEAD',
+                mode: 'no-cors',
+                signal: controller.signal 
+              });
+              
+              clearTimeout(timeoutId);
+              const responseTime = Date.now() - startTime;
+              
+              if (responseTime > 3000) {
+                return { status: 'slow', time: responseTime };
+              }
+              return { status: 'online', time: responseTime };
+            } catch(error) {
+              if (error.name === 'AbortError') {
+                return { status: 'slow', time: 5000 };
+              }
+              return { status: 'offline', time: 0 };
+            }
+          }
+          
+          // Update link status indicators
+          function updateLinkStatus(url, status, time) {
+            document.querySelectorAll(`.link-card[href="${url}"]`).forEach(card => {
+              let statusEl = card.querySelector('.link-status');
+              if (!statusEl) {
+                statusEl = document.createElement('span');
+                statusEl.className = 'link-status';
+                const titleEl = card.querySelector('.title');
+                if (titleEl) titleEl.appendChild(statusEl);
+              }
+              
+              statusEl.className = `link-status ${status}`;
+              const icons = {
+                online: '🟢',
+                offline: '🔴',
+                slow: '🟡',
+                checking: '⏳'
+              };
+              const timeStr = time ? ` (${time}ms)` : '';
+              statusEl.textContent = icons[status] + timeStr;
+              statusEl.title = `${status.charAt(0).toUpperCase() + status.slice(1)}${timeStr}`;
+            });
+          }
+          
+          // Check all links
+          async function checkAllLinks() {
+            if (isChecking) return;
+            isChecking = true;
+            
+            const healthData = {};
+            const links = Array.from(document.querySelectorAll('.link-card[href^="http"]'));
+            const uniqueUrls = [...new Set(links.map(link => link.getAttribute('href')))];
+            
+            // Show checking status
+            uniqueUrls.forEach(url => updateLinkStatus(url, 'checking', null));
+            
+            if (window.ToastManager) {
+              window.ToastManager.info(`Checking ${uniqueUrls.length} links...`, 3000);
+            }
+            
+            // Check links in batches to avoid overwhelming the browser
+            const batchSize = 5;
+            for (let i = 0; i < uniqueUrls.length; i += batchSize) {
+              const batch = uniqueUrls.slice(i, i + batchSize);
+              await Promise.all(batch.map(async (url) => {
+                const result = await checkLink(url);
+                healthData[url] = result;
+                updateLinkStatus(url, result.status, result.time);
+              }));
+              
+              // Small delay between batches
+              if (i + batchSize < uniqueUrls.length) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+              }
+            }
+            
+            saveHealthCache(healthData);
+            isChecking = false;
+            
+            const summary = {
+              online: Object.values(healthData).filter(h => h.status === 'online').length,
+              slow: Object.values(healthData).filter(h => h.status === 'slow').length,
+              offline: Object.values(healthData).filter(h => h.status === 'offline').length
+            };
+            
+            if (window.ToastManager) {
+              window.ToastManager.success(`Health check complete: 🟢 ${summary.online} online, 🟡 ${summary.slow} slow, 🔴 ${summary.offline} offline`, 5000);
+            }
+          }
+          
+          // Load cached health data
+          const cached = getHealthCache();
+          Object.entries(cached).forEach(([url, data]) => {
+            updateLinkStatus(url, data.status, data.time);
+          });
+          
+          // Expose checkAllLinks globally for button access
+          window.checkAllLinks = checkAllLinks;
+          
+          // Add button handler
+          setTimeout(() => {
+            const healthBtn = document.getElementById('healthCheckBtn');
+            if (healthBtn) {
+              healthBtn.addEventListener('click', checkAllLinks);
+            }
+          }, 100);
+        }
+        
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init);
+        } else {
+          init();
+        }
+      })();
+    </script>
+</head>
+<body>
+    <a href="#search" class="skip-link">Skip to search</a>
+    <header class="site-header" role="banner">
+        <div class="site-header-inner">
+            <div class="brand-row">
+                <span class="title-gradient">Workspace Suite</span>
+                <span class="brand-badge">v3.2</span>
+            </div>
+            <nav class="site-nav" aria-label="Site">
+                <a href="Escaltion.html" class="nav-link">Escalation</a>
+                <a href="AdvancedWorkspaceHub.html" class="nav-link">Advanced Hub</a>
+                <a href="QuickLinks.html" class="nav-link" aria-current="page">Quick Links</a>
+                <button id="themeToggle" type="button" class="theme-toggle" title="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                    <span class="theme-text" style="font-size: 13px;">Dark</span>
+                </button>
+                <button id="perfToggle" type="button" class="nav-link" title="Toggle performance mode">Performance: Low</button>
+                <span id="ramMonitor" class="ram-monitor" title="Estimated RAM usage">RAM: --</span>
+            </nav>
+        </div>
+    </header>
+    
+    <div id="lowBanner" class="low-banner" style="display:none;">
+        Low-performance mode is ON for smoother experience.
+        <button id="disableLow" class="btn-surface" style="margin-left:8px;">Disable</button>
+    </div>
+
+    <div class="container">
+        <header class="app-header card header-bar">
+            <div class="header-left">
+                <img class="header-logo" src="https://media1.giphy.com/media/ED6jth7NGu7o5RTCnz/giphy.webp" alt="Logo">
+                <div class="brand">
+                    <span class="brand-title">Quick Links Directory</span>
+                    <span class="badge">v3.2</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <p class="subtitle">Centralized access to all workspace resources</p>
+            </div>
+            <div class="header-right">
+            </div>
+        </header>
+
+        <div id="search">
+            <input type="text" id="searchBox" class="search-box" placeholder="🔍 Search links..." aria-label="Search links">
+            <button id="healthCheckBtn" class="health-check-toggle" title="Check link availability">
+                <span id="healthCheckIcon">🏥</span> Check Link Health
+            </button>
+        </div>
+
+        <div class="stats">
+            <span id="linkCount"></span>
+        </div>
+        
+    <script>
+        // Add health check button handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const healthBtn = document.getElementById('healthCheckBtn');
+            if (healthBtn && window.checkAllLinks) {
+                healthBtn.addEventListener('click', window.checkAllLinks);
+            }
+        });
+    </script>
+
+        <!-- Troubleshooting & Support Tools -->
+        <section class="category-section">
+            <h2 class="category-title">🔧 Troubleshooting & Support Tools</h2>
+            <div class="links-grid">
+                <a href="https://10.183.207.2/csc" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📱</span>Motive Mobile</div>
+                    <div class="url">10.183.207.2/csc</div>
+                </a>
+                <a href="https://10.183.207.4/csc/startup.do" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📞</span>Motive LandLine</div>
+                    <div class="url">10.183.207.4/csc/startup.do</div>
+                </a>
+                <a href="http://10.237.27.3/csc/startup.do" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🏠</span>Motive HS (Home Services)</div>
+                    <div class="url">10.237.27.3/csc/startup.do</div>
+                </a>
+                <a href="http://10.237.27.2/csc/login.vm" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📱</span>Motive MS (Mobile Services)</div>
+                    <div class="url">10.237.27.2/csc</div>
+                </a>
+                <a href="https://simulator-devicecare.etisalat.corp.ae:7777/dcss/Default.aspx" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🔧</span>Device Care</div>
+                    <div class="url">simulator-devicecare.etisalat.corp.ae:7777</div>
+                </a>
+                <a href="http://au4056:9090/OrchestraCCC/login" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🎵</span>Orchestra</div>
+                    <div class="url">au4056:9090/OrchestraCCC</div>
+                </a>
+                <a href="http://ssobas.etisalat.corp.ae/BASSelfCare/menuEBWAccServiceDetailsReadOnly.action" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🌐</span>EBW</div>
+                    <div class="url">ssobas.etisalat.corp.ae/BASSelfCare</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Security & Verification -->
+        <section class="category-section">
+            <h2 class="category-title">🔐 Security & Verification</h2>
+            <div class="links-grid">
+                <a href="https://contactcentre.etisalat.corp.ae/main/cc_sections/CompassAnserFlow/AnswerFlowImages/generator/Security%20verification%20questions.html" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🔐</span>Security Verification</div>
+                    <div class="url">contactcentre.etisalat.corp.ae/.../Security verification</div>
+                </a>
+                <a href="https://okm.etisalat.corp.ae:8226/library/ETISALAT/AnswerFlowImages/generator/Security%20verification%20questions.html" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🔐</span>Verification (OKM)</div>
+                    <div class="url">okm.etisalat.corp.ae:8226/.../Security verification</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- System Navigation & Knowledge Base -->
+        <section class="category-section">
+            <h2 class="category-title">📚 System Navigation & Knowledge Base</h2>
+            <div class="links-grid">
+                <a href="https://infohub.etisalat.corp.ae/StaticResources/shell/login" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🏢</span>InfoHub</div>
+                    <div class="url">infohub.etisalat.corp.ae</div>
+                </a>
+                <a href="https://okm.etisalat.corp.ae:8227/infocentermobile/index?page=home" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📖</span>New OKM</div>
+                    <div class="url">okm.etisalat.corp.ae:8227/infocentermobile</div>
+                </a>
+                <a href="http://cim.etisalat.corp.ae" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">💼</span>CIM</div>
+                    <div class="url">cim.etisalat.corp.ae</div>
+                </a>
+                <a href="https://10.237.227.11:8000/cms/Default.aspx" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📺</span>DTV</div>
+                    <div class="url">10.237.227.11:8000/cms</div>
+                </a>
+                <a href="http://egis/customerlocator/logincs.aspx" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📍</span>CLA Application</div>
+                    <div class="url">egis/customerlocator</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Reporting & Communication -->
+        <section class="category-section">
+            <h2 class="category-title">📊 Reporting & Communication</h2>
+            <div class="links-grid">
+                <a href="https://infohub.etisalat.corp.ae/StaticResources/shell/workspace?appid=ROOT_KB_READER&autologin=ADFS&app=ArticleDetail&d=SKB_PRODUCTION.TENANT2&code=ART-7Y84ZH_PR689" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📊</span>SLA Dashboard</div>
+                    <div class="url">infohub.etisalat.corp.ae/.../SLA Dashboard</div>
+                </a>
+                <a href="https://cccsahir.etisalat.corp.ae/Sahir/" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📈</span>Sahir</div>
+                    <div class="url">cccsahir.etisalat.corp.ae/Sahir</div>
+                </a>
+                <a href="https://contactcentre.etisalat.corp.ae/Main/cc_apps/MBN_AD/WebForm/main.aspx" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📋</span>Message Board</div>
+                    <div class="url">contactcentre.etisalat.corp.ae/.../MBN_AD</div>
+                </a>
+                <a href="https://webmail.etisalat.corp.ae/owa" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">✉️</span>WebMail / Care Mail</div>
+                    <div class="url">webmail.etisalat.corp.ae/owa</div>
+                </a>
+                <a href="https://tawasul-backend.etisalat.corp.ae/SM9.41/index.do" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📞</span>Tawasul</div>
+                    <div class="url">tawasul-backend.etisalat.corp.ae</div>
+                </a>
+                <a href="https://forms.office.com/r/RY2zhF5TKV" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">✅</span>FCR Tracker</div>
+                    <div class="url">forms.office.com/r/RY2zhF5TKV</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Financial & Payment Systems -->
+        <section class="category-section">
+            <h2 class="category-title">💰 Financial & Payment Systems</h2>
+            <div class="links-grid">
+                <a href="https://ssocode.etisalat.corp.ae/code" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🔢</span>Collection Code</div>
+                    <div class="url">ssocode.etisalat.corp.ae/code</div>
+                </a>
+                <a href="https://ssocode.etisalat.corp.ae/code/codeuserLogin.do" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🔢</span>CODE (Login)</div>
+                    <div class="url">ssocode.etisalat.corp.ae/code</div>
+                </a>
+                <a href="http://10.37.240.78:7001/ngaa/index.html" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">💳</span>NGA</div>
+                    <div class="url">10.37.240.78:7001/ngaa</div>
+                </a>
+                <a href="https://pt2.etisalat.ae/ocg/" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">💰</span>Weyak</div>
+                    <div class="url">pt2.etisalat.ae/ocg</div>
+                </a>
+                <a href="https://ipg.comtrust.ae/Merchant/#/Search" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">💳</span>IPG</div>
+                    <div class="url">ipg.comtrust.ae/Merchant</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Adjustments & Generators -->
+        <section class="category-section">
+            <h2 class="category-title">⚙️ Adjustments & Generators</h2>
+            <div class="links-grid">
+                <a href="https://contactcentre.etisalat.corp.ae/main/cc_sections/CompassAnserFlow/AnswerFlowImages/generator/Adjustment%20Generator.html" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">⚙️</span>Adjustment Generator</div>
+                    <div class="url">contactcentre.etisalat.corp.ae/.../Adjustment Generator</div>
+                </a>
+                <a href="https://okm.etisalat.corp.ae:8226/library/ETISALAT/AnswerFlowImages/generator/add%20adjusment_frontline.html" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">💸</span>Waiver Generator</div>
+                    <div class="url">okm.etisalat.corp.ae:8226/.../add adjusment_frontline</div>
+                </a>
+                <a href="https://rpaorchestrator.etisalat.corp.ae:444/processes/home" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">🤖</span>Adjust Dispatcher (RPA)</div>
+                    <div class="url">rpaorchestrator.etisalat.corp.ae:444</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Training & Learning -->
+        <section class="category-section">
+            <h2 class="category-title">🎓 Training & Learning</h2>
+            <div class="links-grid">
+                <a href="https://cc-elearning.etisalat.ae" target="_blank" class="link-card">
+                    <div class="title"><span class="icon">📚</span>eLearning</div>
+                    <div class="url">cc-elearning.etisalat.ae</div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Professional Footer -->
+        <footer class="app-footer">
+            <div class="footer-container">
+                <div class="footer-content">
+                    <div class="footer-section footer-brand">
+                        <h4 class="footer-title">✨ Workspace Suite <span class="version-badge">v3.2</span></h4>
+                        <p class="footer-desc">Professional workspace management optimized for peak performance and productivity</p>
+                        <div class="footer-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-label">Lightning Fast</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">🎨</span>
+                                <span class="stat-label">Modern UI</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📱</span>
+                                <span class="stat-label">PWA Ready</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h5 class="footer-section-title">Quick Navigation</h5>
+                        <div class="footer-links">
+                            <a href="Escaltion.html" class="footer-link"><span class="link-icon">🎯</span> Escalation</a>
+                            <a href="AdvancedWorkspaceHub.html" class="footer-link"><span class="link-icon">🔧</span> Advanced Hub</a>
+                            <a href="QuickLinks.html" class="footer-link"><span class="link-icon">🔗</span> Quick Links</a>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h5 class="footer-section-title">Features</h5>
+                        <ul class="footer-features">
+                            <li>🌙 Dark/Light Theme</li>
+                            <li>⚡ Performance Modes</li>
+                            <li>⌨️ Keyboard Shortcuts</li>
+                            <li>💾 Auto-Save Forms</li>
+                            <li>⭐ Favorites System</li>
+                            <li>🔍 Smart Search</li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h5 class="footer-section-title">About</h5>
+                        <p class="footer-meta"><strong>BATCH 91</strong></p>
+                        <p class="footer-meta">Etisalat Contact Center</p>
+                        <p class="footer-creators">Created by <strong>Basher</strong> & <strong>Abdelrahman Safwat</strong></p>
+                        <div class="footer-social">
+                            <a href="#" class="social-link" title="GitHub">💻</a>
+                            <a href="#" class="social-link" title="LinkedIn">💼</a>
+                            <a href="#" class="social-link" title="Email">📧</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-bottom-content">
+                        <p class="copyright">&copy; <span id="footerYear"></span> Workspace Suite. All rights reserved.</p>
+                        <p class="footer-tagline">Built with ❤️ for peak productivity | 2025 Edition</p>
+                        <p class="footer-tech">Powered by Modern Web Technologies</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Count and display total links
+        const linkCount = document.querySelectorAll('.link-card').length;
+        document.getElementById('linkCount').textContent = `${linkCount} total resources available`;
+        
+        // Update footer year
+        document.getElementById('footerYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

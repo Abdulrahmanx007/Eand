@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional escalation workflow management for Etisalat Contact Center">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2300d4ff' /%3E%3Cstop offset='100%25' style='stop-color:%239d4edd' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='%23111' width='192' height='192' rx='24'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='80' font-weight='bold' fill='url(%23grad)'%3EWS%3C/text%3E%3C/svg%3E">
+
+<title>Escalation Matrix</title>
+<link rel="preconnect" href="https://contactcentre.etisalat.corp.ae" crossorigin>
+<link rel="preconnect" href="https://okm.etisalat.corp.ae:8227" crossorigin>
+<link rel="preconnect" href="https://webmail.etisalat.corp.ae" crossorigin>
+<link rel="preconnect" href="https://simulator-devicecare.etisalat.corp.ae:7777" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script src="theme.js"></script>
+<script src="main.js" defer></script>
+</head>
+<body>
+    <a href="#choose" class="skip-link">Skip to content</a>
+        <header class="site-header" role="banner">
+            <div class="site-header-inner">
+                <div class="brand-row">
+                    <span class="title-gradient">Workspace Suite</span>
+                    <span class="brand-badge">v3.2</span>
+                </div>
+                <nav class="site-nav" aria-label="Site">
+                    <a href="Escaltion.html" class="nav-link" aria-current="page">Escalation</a>
+                    <a href="AdvancedWorkspaceHub.html" class="nav-link" id="navHub">Advanced Hub</a>
+                    <a href="QuickLinks.html" class="nav-link">Quick Links</a>
+                    <button id="themeToggle" type="button" class="theme-toggle" title="Toggle theme">
+                        <span class="theme-icon">🌙</span>
+                        <span class="theme-text" style="font-size: 13px;">Dark</span>
+                    </button>
+                    <button id="perfToggle" type="button" class="nav-link" title="Toggle performance mode">Performance: Low</button>
+                    <span id="ramMonitor" class="ram-monitor" title="Estimated RAM usage">RAM: --</span>
+                </nav>
+            </div>
+        </header>
+	<div align="center" class="container">
+        <header class="app-header card header-bar">
+            <div class="header-left">
+                <img class="header-logo" src="https://media1.giphy.com/media/ED6jth7NGu7o5RTCnz/giphy.webp" alt="Logo">
+                <div class="brand">
+                      <span class="brand-title">Escalation Matrix</span>
+                      <span class="badge">v3.2</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div id="clock" class="clock"></div>
+                <div id="greeting" class="greeting" aria-live="polite"></div>
+            </div>
+            <div class="header-right">
+                <button id="All" class="style1" title="Open daily tools">Start Day!</button>
+            </div>
+        </header>
+
+    
+    <!-- Removed duplicate page title to keep header as the single source of truth -->
+    <!-- reset -->
+    <div id="edit">
+    <button id="reset" class="hidden">reset</button><br>
+    </div>
+    <!-- choose problem -->
+    <div id="choose" class="card form-section">
+        <label for="problem">Select problem:</label>
+    <select name="problem" id="problem">
+            <option disabled selected value>- select an option-</option>
+            <option value="delayindelivery">Delay in delivery</option>
+            <option value="workorder">Proactive task follow up</option>
+            <option value="visitdelay">Tech Visit,Shifting,Installation delay</option>
+            <option value="techcomplaints">Tech Complaints</option>
+            <option value="itdepartment">IT Department</option>
+            <option value="saleslead">Sales lead Follow up</option>
+            <option value="reconnection">Reconnection</option>
+            <option value="dupaid">Paid amount dues in DU, reconnect line</option>
+        </select>
+    </div>
+    <!-- delivary delay -->
+    <div class="d-d hidden card form-section" id="d-d">
+        <h2 class="section-title">Delay in delivery</h2>
+        <label for="dd">Customer Number: </label>
+        <input id="customernumberdelivary" type="number" name="dd" placeholder="eg.05xxxxx"><br>
+        <label for="si">Shipment ID: </label>
+        <input id="inputShipment" type="number" name="si" placeholder="eg.10xxxxx"><br>
+    <button id="bla">submit</button>
+    <button class="reset-btn">reset</button>
+    </div>
+    <!-- IT Department -->
+    <div id="itdepartment" class="hidden card form-section">
+        <h2 class="section-title">IT Department</h2>
+        <label for="itcust">Customer Number: </label>
+        <input id="itcust" type="number" name="itcust" placeholder="eg.05xxxxx"><br>
+        <label for="itacc">Account Number: </label>
+        <input id="itacc" type="number" name="itacc" placeholder="eg.03xxxxx"><br>
+        <label for="itticket">Ticket ID: </label>
+        <input id="itticket" type="text" name="itticket" placeholder="eg. INC-xxxxx / SR-xxxxx"><br>
+        <button id="submitI">submit</button>
+        <button class="reset-btn">reset</button>
+    </div>
+    <div id="copyi" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+        <button class="copDb" id="copIt">TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+        <button class="copDb" id="copIc">CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+        <button class="copDb" id="copIs">Subject</button><br><br>
+        <label>Click Here to Create Body !</label>
+        <button class="copDb" id="copIb">Create Body</button>
+    </div>
+    <div id="copyd" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+    <button id="copDt" class="copDb" >TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+    <button id="copDc" class="copDb">CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+    <button id="copDs" class="copDb">Subject</button><br><br>
+        <label>Click Here to create Body !</label>
+    <button id="copDb" class="copDb">Create Body</button>
+    </div>
+    <!-- work order delay -->
+    <div id="workorder" class="hidden card form-section">
+        <h2 class="section-title">Work order</h2>
+        <label for="workorde">Customer Number: </label>
+        <input id="workord" type="text" name="workorde" placeholder="eg.05xxxxx"><br>
+        <label for="worko">Account Number: </label>
+        <input id="work" type="text" name="worko" placeholder="eg.03xxxxx"><br>
+        <label for="wor">Work Order ID: </label>
+        <input id="wo" type="text" name="wor" placeholder="eg.WO-xxxxx"><br>
+    <button id="submitW">submit</button>
+    <button class="reset-btn">reset</button>
+    </div>
+    <div id="copyw" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+    <button class="copDb" id="copWt">TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+    <button class="copDb" id="copWc">CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+    <button class="copDb" id="copWs">Subject</button><br><br>
+        <label>Click Here to Create Body !</label>
+    <button class="copDb" id="copWb">Create Body</button>
+    </div>
+    <!--  visit delay -->
+    <div id="visitdelay" class="hidden card form-section">
+        <h2 class="section-title">Tech visit / Shifting / Installation delay</h2>
+        <label for="visitdela">Customer Number: </label>
+        <input id="visitdel" type="number" name="visitdelay" placeholder="eg.05xxxxx"><br>
+        <label for="visitde">Account Number: </label>
+        <input id="visitd" type="number" name="visitde" placeholder="eg.03xxxxx"><br>
+        <label for="visit">Request Number: </label>
+        <input id="visi" type="number" name="visit" placeholder="eg.11xxxxx"><br>
+        <label for="vis">Subrequest Number: </label>
+        <input id="vi" type="number" name="vis" placeholder="eg.10xxxxx"><br>
+    <button id="submitV">submit</button>
+    <button class="reset-btn">reset</button>
+    </div>
+    <!-- tech complaints -->
+    <div id="techcomplaints" class="hidden card form-section">
+        <h2 class="section-title">Tech Complaints</h2>
+        <label for="tcust">Customer Number: </label>
+        <input id="tcust" type="number" name="tcust" placeholder="eg.05xxxxx"><br>
+        <label for="tacc">Account Number: </label>
+        <input id="tacc" type="number" name="tacc" placeholder="eg.03xxxxx"><br>
+        <label for="tcomp">Complaint ID: </label>
+        <input id="tcomp" type="text" name="tcomp" placeholder="eg.CM-xxxxx"><br>
+        <button id="submitT">submit</button>
+        <button class="reset-btn">reset</button>
+    </div>
+    <div id="copyt" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+        <button class="copDb" id="copTt">TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+        <button class="copDb" id="copTc">CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+        <button class="copDb" id="copTs">Subject</button><br><br>
+        <label>Click Here to Create Body !</label>
+        <button class="copDb" id="copTb">Create Body</button>
+    </div>
+    <div id="copyv" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+    <button class="copDb" id="copVt" >TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+    <button class="copDb" id="copVc" >CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+    <button class="copDb" id="copVs" >Subject</button><br><br>
+        <label>Click Here to Create Body !</label>
+    <button class="copDb" id="copVb" >Create Body</button>
+    </div>
+    <!-- sales lead delay -->
+    <div id="saleslead" class="hidden card form-section">
+        <h2 class="section-title">Sales lead</h2>
+        <label for="saleslead">Customer Number: </label>
+        <input id="saleslea" type="number" name="saleslead" placeholder="eg.05xxxxx"><br>
+        <label for="salesle">Lead ID: </label>
+        <input id="salesl" type="text" name="salesle" placeholder="eg.L0xxxxx"><br>
+    <button id="submitS">submit</button>
+    <button class="reset-btn">reset</button>
+    </div>
+    <div id="copys" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+    <button class="copDb" id="copSt">TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+    <button class="copDb" id="copSc">CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+    <button class="copDb" id="copSs">Subject</button><br><br>
+        <label>Click Here to Create Body !</label>
+    <button class="copDb" id="copSb">Create Body</button>
+    </div>
+    <!-- reconnection 1st 5 days -->
+    <div id="reconnection" class="hidden card form-section">
+        <h2 class="section-title">Reconnection</h2>
+        <label for="reconnectio">Account Number: </label>
+        <input id="reconnecti" type="number" name="reconnectio" placeholder="05/3xxxxx"><br>    
+    <button id="submitR">submit</button>
+    <button class="reset-btn">reset</button>
+    </div>
+    <div id="copyr" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+    <button class="copDb" id="copyRt">TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+    <button class="copDb" id="copyRc">CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+    <button class="copDb" id="copyRs">Subject</button><br><br>
+        <label>Click Here to Create Body !</label>
+    <button class="copDb" id="copyRb">Create Body</button>
+    </div>
+    <!-- paid Du dues(u) -->
+    <div id="dupaid" class="hidden card form-section">
+        <h2 class="section-title">Paid DU dues (reconnect)</h2>
+        <label for="dupai">Account Number: </label>
+        <input id="dupa" type="number" name="dupai" placeholder="05/3xxxxx"><br>    
+    <button id="submitU">submit</button>
+    <button class="reset-btn">reset</button>
+    </div>
+    <div id="copyu" class="hidden card copy-grid">
+        <label>Click Here to copy TO !</label>
+    <button class="copDb" id="copyUt">TO</button><br><br>
+        <label>Click Here to copy CC !</label>
+    <button class="copDb" id="copyUc">CC</button><br><br>
+        <label>Click Here to copy Subject !</label>
+    <button class="copDb" id="copyUs">Subject</button><br><br>
+        <label>Click Here to Create Body !</label>
+    <button class="copDb" id="copyUb">Create Body</button>
+    </div>
+    <!-- Remider --> <br><br><br>
+    <div id="reminder" class="card">
+    <h3 id="Reminder" class="Reminde hidden">Reminder</h3>
+    <ul id="Re" class="hidden">
+        <li>Custmer calling us the in first 5 days of the month</li>
+        <li>Previuos Monthly rental already paid</li>
+        <li>No other disconection reasons: Expired Emirate ID, Home region & High consumption schemes.</li>
+    <div id="preview" class="mail-preview"></div>
+    
+    </ul>
+    <ul id="Sa" class="hidden">
+        <li>Check if there is any rejection statement and inform the customer.</li>
+        <li>In case of Pre to Post Migration make sure the line is active from 7 days.</li>
+    </ul>
+    <ul id="Vi" class="hidden">
+        <li>In case of complaints make Follow UP</li>
+    </ul>
+    <ul id="Or" class="hidden">
+        <li>Interactions - Proactive Task - status (Appoitment)</li>
+    </ul>
+    </div>
+    <div id="toast" class="hidden" role="status" aria-live="polite"></div>
+    
+    <!-- Professional Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section footer-brand">
+                    <h4 class="footer-title">✨ Workspace Suite <span class="version-badge">v3.2</span></h4>
+                    <p class="footer-desc">Professional workspace management optimized for peak performance and productivity</p>
+                    <div class="footer-stats">
+                        <div class="stat-item">
+                            <span class="stat-icon">⚡</span>
+                            <span class="stat-label">Lightning Fast</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">🎨</span>
+                            <span class="stat-label">Modern UI</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">📱</span>
+                            <span class="stat-label">PWA Ready</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-section-title">Quick Navigation</h5>
+                    <div class="footer-links">
+                        <a href="Escaltion.html" class="footer-link"><span class="link-icon">🎯</span> Escalation</a>
+                        <a href="AdvancedWorkspaceHub.html" class="footer-link"><span class="link-icon">🔧</span> Advanced Hub</a>
+                        <a href="QuickLinks.html" class="footer-link"><span class="link-icon">🔗</span> Quick Links</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-section-title">Features</h5>
+                    <ul class="footer-features">
+                        <li>🌙 Dark/Light Theme</li>
+                        <li>⚡ Performance Modes</li>
+                        <li>⌨️ Keyboard Shortcuts</li>
+                        <li>💾 Auto-Save Forms</li>
+                        <li>⭐ Favorites System</li>
+                        <li>🔍 Smart Search</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h5 class="footer-section-title">About</h5>
+                    <p class="footer-meta"><strong>BATCH 91</strong></p>
+                    <p class="footer-meta">Etisalat Contact Center</p>
+                    <p class="footer-creators">Created by <strong>Basher</strong> & <strong>Abdelrahman Safwat</strong></p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" title="GitHub">💻</a>
+                        <a href="#" class="social-link" title="LinkedIn">💼</a>
+                        <a href="#" class="social-link" title="Email">📧</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p class="copyright">&copy; <span id="year"></span> Workspace Suite. All rights reserved.</p>
+                    <p class="footer-tagline">Built with ❤️ for peak productivity | 2025 Edition</p>
+                    <p class="footer-tech">Powered by Modern Web Technologies</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    
+</body>
+</html>

@@ -8,7 +8,7 @@
 - Smooth transitions with glassmorphism in High mode
 - Keyboard shortcut: `Ctrl+T`ting-edge 2025 workspace hub featuring glassmorphism, 3D effects, and intelligent performance modes**
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://your-username.github.io/SAD/)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://abdulrahmanx007.github.io/Eand/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-success)](https://pages.github.com/)
 
@@ -131,20 +131,20 @@ Toggle with the Performance button or press `Ctrl+P`. Your choice is saved autom
 ### Option 1: GitHub Pages (Recommended)
 Visit the live demo - no installation needed!
 
-**[🌐 Live Demo →](https://your-username.github.io/SAD/)**
+**[🌐 Live Demo →](https://abdulrahmanx007.github.io/Eand/)**
 
 Try these pages:
-- [Escalation Management](https://your-username.github.io/SAD/Escaltion.html)
-- [Quick Links Hub](https://your-username.github.io/SAD/QuickLinks.html)
-- [Advanced Workspace](https://your-username.github.io/SAD/AdvancedWorkspaceHub.html)
+- [Escalation Management](https://abdulrahmanx007.github.io/Eand/Escaltion.html)
+- [Quick Links Hub](https://abdulrahmanx007.github.io/Eand/QuickLinks.html)
+- [Advanced Workspace](https://abdulrahmanx007.github.io/Eand/AdvancedWorkspaceHub.html)
 
 ### Option 2: Local Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/SAD.git
+git clone https://github.com/Abdulrahmanx007/Eand.git
 
 # Navigate to the directory
-cd SAD
+cd Eand
 
 # Open in your browser (Windows)
 start Escaltion.html
@@ -363,6 +363,6 @@ See [TODO.md](TODO.md) and [IMPROVEMENT_ROADMAP.md](IMPROVEMENT_ROADMAP.md) for 
 
 ⭐ **Star this repo if you find it helpful!** ⭐
 
-[Live Demo](https://your-username.github.io/SAD/) • [Report Bug](https://github.com/your-username/SAD/issues) • [Request Feature](https://github.com/your-username/SAD/issues)
+[Live Demo](https://abdulrahmanx007.github.io/Eand/) • [Report Bug](https://github.com/Abdulrahmanx007/Eand/issues) • [Request Feature](https://github.com/Abdulrahmanx007/Eand/issues)
 
 </div>

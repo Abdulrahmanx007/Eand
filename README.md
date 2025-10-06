@@ -1,12 +1,6 @@
-# 🚀 Support Agent Dashboard
+# 🚀 Effortless Desk - Professional Workspace Hub
 
-> **### 🌓 **Dark/Light Theme Toggle**
-- Click the theme button (🌙/☀️) in the header to switch themes
-- **4 Mode Combinations**: Dark+High, Dark+Low, Light+High, Light+Low
-- Auto-saves your preference to localStorage
-- Supports system theme detection
-- Smooth transitions with glassmorphism in High mode
-- Keyboard shortcut: `Ctrl+T`ting-edge 2025 workspace hub featuring glassmorphism, 3D effects, and intelligent performance modes**
+> **A cutting-edge 2025 workspace hub featuring glassmorphism, 3D effects, and intelligent performance modes**
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://basher-tech.me/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -20,14 +14,14 @@ A lightweight yet stunning three-page workspace with 2025-grade design, glassmor
 
 ## 📄 Pages
 
-### 1. **Escalation Matrix** (`Escaltion.html`)
-Escalation workflow management with email templates and copy actions.
+### 1. **Quick Escalator** (`Escaltion.html`)
+Streamlined escalation workflow management with email templates and copy actions.
 
-### 2. **Advanced Workspace Hub** (`AdvancedWorkspaceHub.html`)
-Feature-rich workspace with tools, calculators, and activity logging.
+### 2. **Utility Console** (`AdvancedWorkspaceHub.html`)
+Advanced tools suite with calculators, converters, and productivity utilities.
 
-### 3. **Quick Links** (`QuickLinks.html`)
-Centralized directory of 40+ essential tools and resources with search and favorites.
+### 3. **Instant Access** (`QuickLinks.html`)
+Centralized directory of 50+ essential resources with health checking and favorites.
 
 ---
 

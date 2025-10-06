@@ -6,9 +6,6 @@
     <title>Support Agent Dashboard - Workspace Hub</title>
     <meta name="description" content="Professional workspace hub with escalation management, quick links, and advanced tools. Features 2025 glassmorphism design with intelligent performance modes.">
     
-    <!-- Redirect to main application -->
-    <meta http-equiv="refresh" content="0; url=Escaltion.html">
-    
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
     
@@ -105,14 +102,52 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 240, 255, 0.4);
         }
+        
+        .features {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: left;
+        }
+        
+        .feature {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 240, 255, 0.4);
+            transform: translateY(-3px);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .feature h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #00f0ff;
+        }
+        
+        .feature p {
+            font-size: 14px;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.6);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">🚀</div>
         <h1>Support Agent Dashboard</h1>
-        <p>Redirecting to your workspace...</p>
-        <div class="loader"></div>
+        <p>Your cutting-edge 2025 workspace hub</p>
         
         <div class="links">
             <a href="Escaltion.html">Escalation</a>
@@ -120,16 +155,42 @@
             <a href="AdvancedWorkspaceHub.html">Advanced Hub</a>
         </div>
         
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>2025 Design</h3>
+                <p>Glassmorphism, 3D effects, animated gradients</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Performance Modes</h3>
+                <p>Dual modes for all hardware types</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌓</div>
+                <h3>Dark/Light Theme</h3>
+                <p>4 theme combinations available</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📱</div>
+                <h3>PWA Ready</h3>
+                <p>Install as app, works offline</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⌨️</div>
+                <h3>Keyboard Shortcuts</h3>
+                <p>7+ shortcuts for power users</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💾</div>
+                <h3>Auto-Save</h3>
+                <p>Never lose your work again</p>
+            </div>
+        </div>
+        
         <p style="margin-top: 40px; font-size: 14px; opacity: 0.5;">
-            If not redirected automatically, click one of the links above
+            Choose your workspace to get started
         </p>
     </div>
-    
-    <script>
-        // Fallback redirect after 1 second
-        setTimeout(function() {
-            window.location.href = 'Escaltion.html';
-        }, 1000);
-    </script>
 </body>
 </html>

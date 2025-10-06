@@ -4,7 +4,7 @@
 <div id="performanceIndicator" class="performance-indicator">
     <div class="indicator-content">
         <span class="indicator-icon">⚡</span>
-        <span class="indicator-text">Performance: <strong id="perfModeText">Low</strong></span>
+        <span class="indicator-text">Hero Mode: <strong id="perfModeText">OFF</strong></span>
         <div class="indicator-badge" id="perfBadge">
             <span class="badge-dot"></span>
             <span class="badge-label">OPTIMIZED</span>
@@ -189,7 +189,7 @@ body:not(.low-performance) .badge-label {
         const isLow = document.body.classList.contains('low-performance');
         
         if (perfText) {
-            perfText.textContent = isLow ? 'Low' : 'High';
+            perfText.textContent = isLow ? 'OFF' : 'ON';
         }
         
         if (perfBadge) {

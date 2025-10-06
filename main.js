@@ -12,8 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const low = modeVal === 'low';
         document.documentElement.classList.toggle('low-performance', low);
         document.body.classList.toggle('low-performance', low);
+        const banner = document.getElementById('lowBanner');
+        if (banner) banner.style.display = low ? 'block' : 'none';
         const btn = document.getElementById('perfToggle');
-        if (btn) btn.textContent = 'Performance: ' + (low ? 'Low' : 'High');
+        if (btn) btn.textContent = 'Hero Mode ' + (low ? 'OFF' : 'ON');
         // Update Hub nav to pass low=1 when in low mode
         const hubLink = document.getElementById('navHub');
         if (hubLink && hubLink instanceof HTMLAnchorElement) {
@@ -26,6 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (btn) {
         btn.addEventListener('click', () => {
           mode = (mode === 'low') ? 'high' : 'low';
+          localStorage.setItem(key, mode);
+          apply(mode);
+        });
+      }
+      // Banner "Disable" button listener
+      const disableLowBtn = document.getElementById('disableLow');
+      if (disableLowBtn) {
+        disableLowBtn.addEventListener('click', () => {
+          mode = 'high';
           localStorage.setItem(key, mode);
           apply(mode);
         });

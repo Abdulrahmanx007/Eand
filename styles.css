@@ -1710,6 +1710,199 @@ body:not(.low-performance) .style4:hover {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 
+/* 📱 MOBILE & TABLET RESPONSIVE STYLES */
+@media (max-width: 1024px) {
+  .site-header-inner {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  
+  .brand-row {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .site-nav {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .site-nav .nav-link {
+    font-size: 13px;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+  
+  .title-gradient {
+    font-size: 20px !important;
+  }
+  
+  .brand-badge {
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-header-inner {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .brand-row {
+    gap: 8px;
+  }
+  
+  .title-gradient {
+    font-size: 18px !important;
+  }
+  
+  .brand-badge {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+  }
+  
+  .site-nav {
+    gap: 6px;
+    max-width: 100%;
+  }
+  
+  .site-nav .nav-link {
+    font-size: 12px;
+    padding: 6px 10px;
+    flex: 1 1 auto;
+    min-width: fit-content;
+    text-align: center;
+  }
+  
+  /* Hide RAM monitor on smaller screens */
+  .ram-monitor {
+    display: none;
+  }
+  
+  /* Compact theme toggle */
+  .theme-toggle {
+    min-width: auto;
+  }
+  
+  .theme-text {
+    display: none;
+  }
+  
+  .theme-icon {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-header-inner {
+    padding: 8px 10px;
+  }
+  
+  .title-gradient {
+    font-size: 16px !important;
+  }
+  
+  .brand-badge {
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+  
+  .site-nav {
+    gap: 4px;
+  }
+  
+  .site-nav .nav-link {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+  
+  /* Make nav items stack on very small screens if needed */
+  .site-nav {
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  
+  /* Hide performance toggle text on mobile */
+  #perfToggle {
+    font-size: 0;
+    padding: 6px 10px;
+  }
+  
+  #perfToggle::before {
+    content: "⚡";
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header-inner {
+    padding: 8px;
+  }
+  
+  .brand-row {
+    gap: 6px;
+  }
+  
+  .title-gradient {
+    font-size: 14px !important;
+  }
+  
+  .brand-badge {
+    font-size: 9px !important;
+    padding: 2px 5px !important;
+  }
+  
+  .site-nav {
+    gap: 3px;
+  }
+  
+  .site-nav .nav-link {
+    font-size: 10px;
+    padding: 4px 6px;
+    border-radius: 6px;
+  }
+  
+  /* Even more compact on tiny screens */
+  .theme-toggle {
+    padding: 4px 8px;
+  }
+  
+  .theme-icon {
+    font-size: 16px;
+  }
+}
+
+/* Fix animated background on mobile */
+@media (max-width: 768px) {
+  .animated-bg {
+    position: fixed;
+    opacity: 0.3;
+  }
+  
+  .floating-shapes .shape {
+    width: 200px;
+    height: 200px;
+  }
+  
+  /* Prevent black screen issues */
+  body {
+    min-height: 100vh;
+    background: var(--bg-primary);
+  }
+  
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 /* Mail preview area */
 .mail-preview {
   max-width: 900px;

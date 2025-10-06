@@ -173,7 +173,7 @@
           const banner = document.getElementById('lowBanner');
           if (banner) banner.style.display = low ? 'block' : 'none';
           const toggle = document.getElementById('perfToggle');
-          if (toggle) toggle.textContent = 'Performance: ' + (low ? 'Low' : 'High');
+          if (toggle) toggle.textContent = 'Hero Mode ' + (low ? 'OFF' : 'ON');
         }
         
         function setMode(newMode){
@@ -555,7 +555,7 @@
                     <span class="theme-icon">🌙</span>
                     <span class="theme-text" style="font-size: 13px;">Dark</span>
                 </button>
-                <button id="perfToggle" type="button" class="nav-link" title="Toggle performance mode">Performance: Low</button>
+                <button id="perfToggle" type="button" class="nav-link" title="Toggle performance mode">Hero Mode OFF</button>
                 <span id="ramMonitor" class="ram-monitor" title="Estimated RAM usage">RAM: --</span>
             </nav>
         </div>

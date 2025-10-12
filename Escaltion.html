@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://simulator-devicecare.etisalat.corp.ae:7777" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <script src="theme.js"></script>
+<script src="tutorial.js" defer></script>
 <script src="main.js" defer></script>
 </head>
 <body>
@@ -338,6 +339,60 @@
             </div>
         </div>
     </footer>
+    
+    <!-- Tutorial Help Button -->
+    <button class="tutorial-help-btn" onclick="showTutorialMenu()" title="Interactive Tutorials (Press F1)">?</button>
+    
+    <!-- Tutorial Menu -->
+    <div class="tutorial-menu" id="tutorialMenu">
+        <h4 class="tutorial-menu-title">📚 Interactive Tutorials</h4>
+        <div class="tutorial-menu-item" onclick="startTutorial('escalator')">
+            <span class="icon">⚡</span>
+            <span>Quick Escalator Tour</span>
+        </div>
+        <div class="tutorial-menu-item" onclick="startTutorial('features')">
+            <span class="icon">✨</span>
+            <span>Key Features Overview</span>
+        </div>
+        <div class="tutorial-menu-item" onclick="startTutorial('welcome')">
+            <span class="icon">👋</span>
+            <span>Welcome Tour (Restart)</span>
+        </div>
+        <div class="tutorial-menu-item" onclick="window.tutorialManager.resetProgress(); alert('Tutorial progress reset! Refresh the page to see the welcome tour again.');" style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 8px; padding-top: 12px;">
+            <span class="icon">🔄</span>
+            <span>Reset Progress</span>
+        </div>
+    </div>
+    
+    <script>
+        // Tutorial menu toggle
+        function showTutorialMenu() {
+            const menu = document.getElementById('tutorialMenu');
+            menu.classList.toggle('active');
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('tutorialMenu');
+            const btn = document.querySelector('.tutorial-help-btn');
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+        
+        // Update menu items with completion status
+        setTimeout(() => {
+            if (window.tutorialManager) {
+                const tours = ['escalator', 'features', 'welcome'];
+                const menuItems = document.querySelectorAll('.tutorial-menu-item');
+                tours.forEach((tourId, index) => {
+                    if (window.tutorialManager.getTourStatus(tourId)) {
+                        menuItems[index].classList.add('completed');
+                    }
+                });
+            }
+        }, 500);
+    </script>
     
     
 </body>

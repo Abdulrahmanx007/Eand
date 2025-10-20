@@ -1280,12 +1280,6 @@
                                 <input type="number" class="form-input" id="vat-amount" step="0.01" readonly placeholder="0.00">
                             </div>
                         </div>
-                        <div class="form-group" id="vatExplanationContainer" style="display: none; margin-top: 15px;">
-                            <label class="form-label" style="color: var(--accent-blue); font-weight: 600;">Smart Explanation:</label>
-                            <div style="background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 12px; padding: 15px; font-size: 0.9rem; line-height: 1.5; color: var(--text-primary);">
-                                <div id="vatExplanation"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="tool-card calculator-card">
@@ -1676,8 +1670,6 @@
         const priceWithoutVATInput = document.getElementById('price-without-vat');
         const priceWithVATInput = document.getElementById('price-with-vat');
         const vatAmountInput = document.getElementById('vat-amount');
-        const vatExplanationContainer = document.getElementById('vatExplanationContainer');
-        const vatExplanation = document.getElementById('vatExplanation');
 
         function calculateVAT() {
             const priceWithoutVAT = parseFloat(priceWithoutVATInput.value) || 0;
@@ -1686,94 +1678,6 @@
             
             priceWithVATInput.value = priceWithVAT.toFixed(2);
             vatAmountInput.value = vatAmount.toFixed(2);
-
-            // Auto-generate smart explanation
-            if (priceWithoutVAT > 0) {
-                generateSmartVATExplanation(priceWithoutVAT, vatAmount, priceWithVAT);
-            } else {
-                vatExplanationContainer.style.display = 'none';
-            }
-        }
-
-        function typeWriter(element, text, speed = 30) {
-            element.innerHTML = '';
-            let i = 0;
-            function type() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
-                }
-            }
-            type();
-        }
-
-        // Word-by-word typing effect for professional explanations
-        function typeWriterWordByWord(element, html, speed) {
-            element.innerHTML = '';
-            // Improved tokenization: keep HTML tags, split by space but preserve punctuation
-            const tokens = [];
-            let buffer = '';
-            let inTag = false;
-            for (let i = 0; i < html.length; i++) {
-                const char = html[i];
-                if (char === '<') inTag = true;
-                if (inTag) buffer += char;
-                else if (char === ' ') {
-                    if (buffer) tokens.push(buffer);
-                    buffer = '';
-                } else if (char === '>' && inTag) {
-                    buffer += char;
-                    tokens.push(buffer);
-                    buffer = '';
-                    inTag = false;
-                } else {
-                    buffer += char;
-                }
-            }
-            if (buffer) tokens.push(buffer);
-            let idx = 0;
-            function type() {
-                if (idx < tokens.length) {
-                    element.innerHTML += tokens[idx] + (tokens[idx].endsWith('>') ? '' : ' ');
-                    idx++;
-                    setTimeout(type, speed);
-                }
-            }
-            type();
-        }
-
-        function generateSmartVATExplanation(basePrice, vatAmount, totalPrice) {
-            const explanationVariations = [
-                `Let me explain your bill:
-<br><b>Base Price</b>: This is the price of your package before tax (<b>${basePrice.toFixed(2)} AED</b>).
-<br><b>VAT Amount</b>: The UAE government requires a 5% Value Added Tax, which is <b>${vatAmount.toFixed(2)} AED</b>.
-<br><b>Total Price</b>: This is the total you pay, including VAT (<b>${totalPrice.toFixed(2)} AED</b>). If you have any questions, I am happy to explain further.`,
-                `Here is a breakdown for you:
-<br><b>Base Price</b>: The cost of your package before VAT (<b>${basePrice.toFixed(2)} AED</b>).
-<br><b>VAT Amount</b>: 5% tax required by UAE law (<b>${vatAmount.toFixed(2)} AED</b>).
-<br><b>Total Price</b>: The final amount including VAT (<b>${totalPrice.toFixed(2)} AED</b>). Please let me know if you need more details.`,
-                `To clarify:
-<br><b>Base Price</b> is the original price (<b>${basePrice.toFixed(2)} AED</b>).
-<br><b>VAT Amount</b> is the 5% tax added (<b>${vatAmount.toFixed(2)} AED</b>).
-<br><b>Total Price</b> is what you pay in total (<b>${totalPrice.toFixed(2)} AED</b>). I am here to answer any questions.`,
-                `Your bill includes:
-<br><b>Base Price</b>: The price before VAT (<b>${basePrice.toFixed(2)} AED</b>).
-<br><b>VAT Amount</b>: 5% VAT as per UAE law (<b>${vatAmount.toFixed(2)} AED</b>).
-<br><b>Total Price</b>: The total including VAT (<b>${totalPrice.toFixed(2)} AED</b>). If you need more details, I am happy to assist.`,
-                `For your reference:
-<br><b>Base Price</b>: Price before tax (<b>${basePrice.toFixed(2)} AED</b>).
-<br><b>VAT Amount</b>: 5% VAT (<b>${vatAmount.toFixed(2)} AED</b>).
-<br><b>Total Price</b>: Amount you pay including VAT (<b>${totalPrice.toFixed(2)} AED</b>). Please let me know if you have any questions.`
-            ];
-            const randomExplanation = explanationVariations[Math.floor(Math.random() * explanationVariations.length)];
-            vatExplanationContainer.style.display = 'block';
-            vatExplanationContainer.style.opacity = '0';
-            setTimeout(() => {
-                vatExplanationContainer.style.transition = 'opacity 0.3s ease';
-                vatExplanationContainer.style.opacity = '1';
-                typeWriterWordByWord(vatExplanation, randomExplanation, 25);
-            }, 100);
         }
 
         priceWithoutVATInput.addEventListener('input', calculateVAT);

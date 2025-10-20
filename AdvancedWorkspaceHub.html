@@ -1300,13 +1300,15 @@
 
                         <!-- New: Total Data Size and Unit -->
                         <div class="form-group">
-                            <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
-                                <label class="form-label" style="min-width: 120px;">Total Data Size:</label>
-                                <input type="number" class="form-input" id="total-data-size" step="0.01" placeholder="e.g. 10" style="flex: 1;">
-                                <select id="data-unit" class="form-input" style="width: 80px; flex-shrink: 0;">
-                                    <option value="GB">GB</option>
-                                    <option value="MB">MB</option>
-                                </select>
+                            <div class="form-row">
+                                <label class="form-label">Total Data Size:</label>
+                                <div style="display: flex; gap: 8px; flex: 1;">
+                                    <input type="number" class="form-input" id="total-data-size" step="0.01" placeholder="e.g. 10" style="flex: 1; min-width: 0;">
+                                    <select id="data-unit" class="form-input" style="width: 70px; padding: 8px 4px; flex-shrink: 0;">
+                                        <option value="GB">GB</option>
+                                        <option value="MB">MB</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 

@@ -1293,22 +1293,23 @@
                     <div class="calculator-content">
                         <div class="form-group">
                             <div class="form-row">
-                                <label class="form-label">Total Price (AED):</label>
-                                <input type="number" class="form-input" id="total-price" step="0.01" placeholder="e.g., 100.00">
+                                <label class="form-label">Total Price:</label>
+                                <input type="number" class="form-input" id="total-price" step="0.01" placeholder="0.00">
                             </div>
                         </div>
+
+                        <!-- New: Total Data Size and Unit -->
                         <div class="form-group">
                             <div class="form-row">
-                                <label class="form-label">Total Data Amount:</label>
-                                <div style="display: flex; gap: 8px; flex: 1;">
-                                    <input type="number" class="form-input" id="total-data" step="0.01" placeholder="e.g., 50" style="flex: 2;">
-                                    <select class="form-input" id="data-unit" style="flex: 1;">
-                                        <option value="GB">GB</option>
-                                        <option value="MB">MB</option>
-                                    </select>
-                                </div>
+                                <label class="form-label">Total Data Size:</label>
+                                <input type="number" class="form-input" id="total-data-size" step="0.01" placeholder="e.g. 10">
+                                <select id="data-unit" class="form-input" style="max-width:100px;">
+                                    <option value="GB">GB</option>
+                                    <option value="MB">MB</option>
+                                </select>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <div class="form-row">
                                 <label class="form-label">Days in Month:</label>
@@ -1321,16 +1322,20 @@
                                 <input type="number" class="form-input" id="remaining-days" readonly>
                             </div>
                         </div>
-                        <div class="form-group" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(157, 78, 221, 0.1)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 15px;">
+                        <div class="form-group">
                             <div class="form-row">
-                                <label class="form-label" style="color: var(--accent-cyan); font-weight: 700;">💰 Prorated Price:</label>
-                                <input type="text" class="form-input" id="prorated-price" readonly placeholder="0.00 AED" style="font-weight: 700; color: var(--accent-cyan); background: rgba(0, 212, 255, 0.05);">
-                            </div>
-                            <div class="form-row" style="margin-top: 10px;">
-                                <label class="form-label" style="color: var(--accent-purple); font-weight: 700;">📊 Prorated Data:</label>
-                                <input type="text" class="form-input" id="prorated-data" readonly placeholder="0.00 GB/MB" style="font-weight: 700; color: var(--accent-purple); background: rgba(157, 78, 221, 0.05);">
+                                <label class="form-label">Prorated Price:</label>
+                                <input type="number" class="form-input" id="prorated-price" readonly placeholder="0.00">
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <div class="form-row">
+                                <label class="form-label">Prorated Data:</label>
+                                <input type="text" class="form-input" id="prorated-data" readonly placeholder="0.00 GB / MB">
+                            </div>
+                        </div>
+
                         <div class="form-group" id="proratedExplanationContainer" style="display: none; margin-top: 15px;">
                             <label class="form-label" style="color: var(--accent-purple); font-weight: 600;">Smart Explanation:</label>
                             <div style="background: rgba(157, 78, 221, 0.08); border: 1px solid rgba(157, 78, 221, 0.2); border-radius: 12px; padding: 15px; font-size: 0.9rem; line-height: 1.5; color: var(--text-primary);">
@@ -1782,81 +1787,64 @@
 
         // Prorated Calculator
     const totalPriceInput = document.getElementById('total-price');
-    const totalDataInput = document.getElementById('total-data');
-    const dataUnitSelect = document.getElementById('data-unit');
     const daysInMonthInput = document.getElementById('days-in-month');
     const remainingDaysInput = document.getElementById('remaining-days');
     const proratedPriceInput = document.getElementById('prorated-price');
-    const proratedDataInput = document.getElementById('prorated-data');
     const proratedExplanationContainer = document.getElementById('proratedExplanationContainer');
     const proratedExplanation = document.getElementById('proratedExplanation');
+    // New elements for data size
+    const totalDataSizeInput = document.getElementById('total-data-size');
+    const dataUnitSelect = document.getElementById('data-unit');
+    const proratedDataOutput = document.getElementById('prorated-data');
 
         function updateProratedCalculations() {
             const totalPrice = parseFloat(totalPriceInput.value) || 0;
-            const totalData = parseFloat(totalDataInput.value) || 0;
-            const dataUnit = dataUnitSelect.value;
             const daysInMonth = parseInt(daysInMonthInput.value) || 1;
             const remainingDays = parseInt(remainingDaysInput.value) || 0;
-            
-            // Calculate prorated price
             const proratedPrice = (totalPrice / daysInMonth) * remainingDays;
-            proratedPriceInput.value = proratedPrice.toFixed(2) + ' AED';
-            
-            // Calculate prorated data
-            const proratedData = (totalData / daysInMonth) * remainingDays;
-            proratedDataInput.value = proratedData.toFixed(2) + ' ' + dataUnit;
+            proratedPriceInput.value = proratedPrice.toFixed(2);
+
+            // Data prorating: calculate prorated data amount
+            const totalDataSize = parseFloat(totalDataSizeInput && totalDataSizeInput.value) || 0;
+            const dataUnit = dataUnitSelect ? dataUnitSelect.value : 'GB';
+            // Convert totalDataSize to MB for calculation (MB base)
+            let totalDataMB = totalDataSize;
+            if (dataUnit === 'GB') totalDataMB = totalDataSize * 1024;
+            // proratedDataMB
+            const proratedDataMB = (totalDataMB / daysInMonth) * remainingDays;
+            // Display both in MB and GB (friendly)
+            const proratedDataGB = proratedDataMB / 1024;
+            // Prefer showing in GB if >= 0.1 GB
+            if (proratedDataGB >= 0.1) {
+                proratedDataOutput.value = `${proratedDataGB.toFixed(2)} GB (${Math.round(proratedDataMB)} MB)`;
+            } else {
+                proratedDataOutput.value = `${Math.round(proratedDataMB)} MB (${proratedDataGB.toFixed(3)} GB)`;
+            }
 
             // Smart Explanation logic with word-by-word typing
             const explanationVariations = [
-                `Let me break down your package for you:
-<br><b>📦 Full Package</b>: <b>${totalPrice.toFixed(2)} AED</b> for <b>${totalData} ${dataUnit}</b> per month.
-<br><b>📅 Remaining Days</b>: You have <b>${remainingDays} days</b> left in this month (out of ${daysInMonth} days).
-<br><b>💰 Prorated Price</b>: You will pay <b>${proratedPrice.toFixed(2)} AED</b> for the remaining days this month.
-<br><b>📊 Prorated Data</b>: You will receive <b>${proratedData.toFixed(2)} ${dataUnit}</b> of data for the remaining days.
-<br><br>Starting next month, you will pay the full <b>${totalPrice.toFixed(2)} AED</b> and receive the complete <b>${totalData} ${dataUnit}</b> allocation. If you have any questions, I'm happy to help!`,
-                
-                `Here's your package breakdown:
-<br><b>Monthly Package</b>: <b>${totalPrice.toFixed(2)} AED</b> + <b>${totalData} ${dataUnit}</b> data
-<br><b>Days Used</b>: <b>${remainingDays}</b> out of <b>${daysInMonth}</b> days
-<br><b>You Pay</b>: <b>${proratedPrice.toFixed(2)} AED</b> (prorated for ${remainingDays} days)
-<br><b>You Get</b>: <b>${proratedData.toFixed(2)} ${dataUnit}</b> (prorated data allocation)
-<br><br>From next month onwards, you'll be charged the full monthly price and receive the complete data package.`,
-                
-                `Your prorated package details:
-<br><b>✨ Full Monthly Package</b>: ${totalPrice.toFixed(2)} AED for ${totalData} ${dataUnit}
-<br><b>🗓️ Current Month</b>: ${remainingDays} days remaining (${daysInMonth} total days)
-<br><b>💵 This Month's Charge</b>: ${proratedPrice.toFixed(2)} AED
-<br><b>📡 This Month's Data</b>: ${proratedData.toFixed(2)} ${dataUnit}
-<br><br>Next billing cycle will be the standard ${totalPrice.toFixed(2)} AED for the full ${totalData} ${dataUnit}.`,
-                
-                `Perfect! Let me explain your charges:
-<br><b>Package Price</b>: ${totalPrice.toFixed(2)} AED/month
-<br><b>Data Included</b>: ${totalData} ${dataUnit}/month
-<br><b>Billing Period</b>: ${remainingDays} days (this month has ${daysInMonth} days)
-<br><br><b>🎯 What You'll Pay</b>: <span style="color: var(--accent-cyan); font-weight: 700;">${proratedPrice.toFixed(2)} AED</span>
-<br><b>📊 What You'll Get</b>: <span style="color: var(--accent-purple); font-weight: 700;">${proratedData.toFixed(2)} ${dataUnit}</span>
-<br><br>This is calculated fairly based on the remaining days in the month. Next month, full charges apply!`,
-                
-                `To clarify your billing:
-<br><b>Standard Monthly Cost</b>: ${totalPrice.toFixed(2)} AED
-<br><b>Standard Data Allowance</b>: ${totalData} ${dataUnit}
-<br><b>Days to Bill</b>: ${remainingDays} of ${daysInMonth} days
-<br><b>Prorated Amount</b>: ${proratedPrice.toFixed(2)} AED (${((remainingDays/daysInMonth)*100).toFixed(1)}% of monthly price)
-<br><b>Prorated Data</b>: ${proratedData.toFixed(2)} ${dataUnit} (${((remainingDays/daysInMonth)*100).toFixed(1)}% of monthly data)
-<br><br>You only pay for what you use this month. Simple and fair! 😊`
+                `Let me explain each part of your bill:
+<br><b>Total Price</b>: This is the regular monthly price for your package, which is <b>${totalPrice.toFixed(2)} AED</b>.
+<br><b>Remaining Days</b>: These are the days left in the current month for which you will be billed, which is <b>${remainingDays}</b> days.
+<br><b>Prorated Price</b>: This is the amount you pay for just the remaining days this month, which is <b>${proratedPrice.toFixed(2)} AED</b>. Next month, you will pay the full monthly price. If you have any questions, I am happy to explain further.`,
+                `Here is a breakdown for you:
+<br><b>Total Price</b>: The standard monthly cost of your package (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b>: The number of days you will use the service this month (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b>: The charge for just those days (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, you will be billed the full monthly price.`,
+                `To clarify:
+<br><b>Total Price</b> is your usual monthly fee (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b> is how many days are left in the month (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b> is what you pay for those days only (<b>${proratedPrice.toFixed(2)} AED</b>). Full billing starts next month.`,
+                `Your bill includes:
+<br><b>Total Price</b>: The monthly package price (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b>: Days left in the month (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b>: The amount for just those days (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, you pay the full monthly price.`,
+                `For your reference:
+<br><b>Total Price</b>: Monthly cost (<b>${totalPrice.toFixed(2)} AED</b>).
+<br><b>Remaining Days</b>: Days you will be billed for (<b>${remainingDays}</b>).
+<br><b>Prorated Price</b>: Your charge for this month (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, the full monthly price applies.`
             ];
-            
-            if (totalPrice > 0 || totalData > 0) {
-                const randomExplanation = explanationVariations[Math.floor(Math.random() * explanationVariations.length)];
-                proratedExplanation.innerHTML = '';
-                proratedExplanationContainer.style.display = 'block';
-                proratedExplanationContainer.style.opacity = '0';
-                setTimeout(() => {
-                    proratedExplanationContainer.style.transition = 'opacity 0.3s ease';
-                    proratedExplanationContainer.style.opacity = '1';
-                    typeWriterWordByWord(proratedExplanation, randomExplanation, 25);
-                }, 100);
-            } else {
+                if (totalPrice > 0 || totalDataSize > 0) {
                 const randomExplanation = explanationVariations[Math.floor(Math.random() * explanationVariations.length)];
                 proratedExplanation.innerHTML = '';
                 proratedExplanationContainer.style.display = 'block';
@@ -1887,9 +1875,10 @@
             updateProratedCalculations();
         }
 
-        totalPriceInput.addEventListener('input', updateProratedCalculations);
-        totalDataInput.addEventListener('input', updateProratedCalculations);
-        dataUnitSelect.addEventListener('change', updateProratedCalculations);
+    totalPriceInput.addEventListener('input', updateProratedCalculations);
+    // New listeners for data size/unit changes
+    if (totalDataSizeInput) totalDataSizeInput.addEventListener('input', updateProratedCalculations);
+    if (dataUnitSelect) dataUnitSelect.addEventListener('change', updateProratedCalculations);
 
         // Activity Logger functionality
         // Initialize with some demo data to show persistence

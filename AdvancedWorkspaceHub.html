@@ -1346,6 +1346,22 @@
             <div class="tool-card calculator-card" style="max-width: 100%;">
                 <h2 class="tool-title">📞 Phonetic Alphabet Helper</h2>
                 <div class="calculator-content">
+                    <!-- Alphabet Type Selection -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label" style="margin-bottom: 10px; display: block;">Choose Alphabet Style:</label>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="phonetic-mode-btn active" data-mode="nato" style="flex: 1; min-width: 150px; padding: 12px 20px; border: 2px solid var(--accent-blue); background: var(--accent-blue); color: white; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                                🌍 NATO (Professional)
+                            </button>
+                            <button class="phonetic-mode-btn" data-mode="simple" style="flex: 1; min-width: 150px; padding: 12px 20px; border: 2px solid var(--accent-blue); background: transparent; color: var(--accent-blue); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                                😊 Simple (Friendly)
+                            </button>
+                            <button class="phonetic-mode-btn" data-mode="uae" style="flex: 1; min-width: 150px; padding: 12px 20px; border: 2px solid var(--accent-blue); background: transparent; color: var(--accent-blue); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                                🇦🇪 UAE Context
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <div class="form-row">
                             <label class="form-label">Enter Code/Text:</label>
@@ -1353,7 +1369,9 @@
                         </div>
                     </div>
                     <div class="form-group" id="phonetic-output-container" style="display: none; margin-top: 15px;">
-                        <label class="form-label" style="color: var(--accent-blue); font-weight: 600; margin-bottom: 10px; display: block;">📢 Read to Customer:</label>
+                        <label class="form-label" style="color: var(--accent-blue); font-weight: 600; margin-bottom: 10px; display: block;">
+                            📢 Read to Customer (<span id="current-mode-label">NATO Professional</span>):
+                        </label>
                         <div id="phonetic-output" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(138, 43, 226, 0.08)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 20px; font-size: 1.1rem; line-height: 1.8; color: var(--text-primary); font-weight: 500;"></div>
                     </div>
                     <button class="btn btn-secondary" id="copy-phonetic-btn" style="margin-top: 15px; display: none;">
@@ -1762,9 +1780,13 @@
         const phoneticOutput = document.getElementById('phonetic-output');
         const phoneticOutputContainer = document.getElementById('phonetic-output-container');
         const copyPhoneticBtn = document.getElementById('copy-phonetic-btn');
+        const phoneticModeButtons = document.querySelectorAll('.phonetic-mode-btn');
+        const currentModeLabel = document.getElementById('current-mode-label');
 
-        // NATO Phonetic Alphabet (Professional Standard)
-        const phoneticAlphabet = {
+        let currentPhoneticMode = 'nato';
+
+        // NATO Phonetic Alphabet (Professional Standard - International)
+        const natoAlphabet = {
             'A': 'Alpha', 'B': 'Bravo', 'C': 'Charlie', 'D': 'Delta', 
             'E': 'Echo', 'F': 'Foxtrot', 'G': 'Golf', 'H': 'Hotel',
             'I': 'India', 'J': 'Juliett', 'K': 'Kilo', 'L': 'Lima',
@@ -1779,6 +1801,82 @@
             '+': 'Plus', '=': 'Equals', ' ': 'Space'
         };
 
+        // Simple/Friendly Alphabet (Easy for customers to understand)
+        const simpleAlphabet = {
+            'A': 'Apple', 'B': 'Boy', 'C': 'Cat', 'D': 'Dog', 
+            'E': 'Egg', 'F': 'Fish', 'G': 'Girl', 'H': 'House',
+            'I': 'Ice', 'J': 'Jump', 'K': 'King', 'L': 'Lion',
+            'M': 'Money', 'N': 'Night', 'O': 'Orange', 'P': 'Park',
+            'Q': 'Queen', 'R': 'Rose', 'S': 'Sun', 'T': 'Tiger',
+            'U': 'Umbrella', 'V': 'Van', 'W': 'Water', 'X': 'X-mas',
+            'Y': 'Yellow', 'Z': 'Zebra',
+            '0': 'Zero', '1': 'One', '2': 'Two', '3': 'Three', '4': 'Four',
+            '5': 'Five', '6': 'Six', '7': 'Seven', '8': 'Eight', '9': 'Nine',
+            '-': 'Dash', '_': 'Underscore', '.': 'Dot', '@': 'At Sign',
+            '#': 'Hash', '*': 'Star', '/': 'Slash', '\\': 'Backslash',
+            '+': 'Plus', '=': 'Equals', ' ': 'Space'
+        };
+
+        // UAE Context Alphabet (Local references familiar to UAE customers)
+        const uaeAlphabet = {
+            'A': 'Abu Dhabi', 'B': 'Burj Khalifa', 'C': 'Coffee', 'D': 'Dubai', 
+            'E': 'Emirates', 'F': 'Ferrari (World)', 'G': 'Gold', 'H': 'Hotel',
+            'I': 'Internet', 'J': 'Jumeirah', 'K': 'Khalifa', 'L': 'Louvre',
+            'M': 'Mall', 'N': 'Network', 'O': 'Office', 'P': 'Palm',
+            'Q': 'Qatar (neighbor)', 'R': 'Ras Al Khaimah', 'S': 'Sharjah', 'T': 'Tower',
+            'U': 'UAE', 'V': 'Villa', 'W': 'WiFi', 'X': 'X-ray',
+            'Y': 'Yas Island', 'Z': 'Zero (number)',
+            '0': 'Zero', '1': 'One', '2': 'Two', '3': 'Three', '4': 'Four',
+            '5': 'Five', '6': 'Six', '7': 'Seven', '8': 'Eight', '9': 'Nine',
+            '-': 'Dash', '_': 'Underscore', '.': 'Dot', '@': 'At Sign',
+            '#': 'Hash', '*': 'Star', '/': 'Slash', '\\': 'Backslash',
+            '+': 'Plus', '=': 'Equals', ' ': 'Space'
+        };
+
+        // Get current alphabet based on mode
+        function getCurrentAlphabet() {
+            switch(currentPhoneticMode) {
+                case 'nato': return natoAlphabet;
+                case 'simple': return simpleAlphabet;
+                case 'uae': return uaeAlphabet;
+                default: return natoAlphabet;
+            }
+        }
+
+        // Update mode label text
+        function updateModeLabel() {
+            const labels = {
+                'nato': 'NATO Professional',
+                'simple': 'Simple & Friendly',
+                'uae': 'UAE Context'
+            };
+            currentModeLabel.textContent = labels[currentPhoneticMode];
+        }
+
+        // Mode button click handlers
+        phoneticModeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                phoneticModeButtons.forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'transparent';
+                    b.style.color = 'var(--accent-blue)';
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                this.style.background = 'var(--accent-blue)';
+                this.style.color = 'white';
+                
+                // Update mode
+                currentPhoneticMode = this.getAttribute('data-mode');
+                updateModeLabel();
+                
+                // Re-convert with new alphabet
+                convertToPhonetic();
+            });
+        });
+
         function convertToPhonetic() {
             const input = phoneticInput.value.toUpperCase().trim();
             
@@ -1788,10 +1886,12 @@
                 return;
             }
 
+            const alphabet = getCurrentAlphabet();
             let result = [];
+            
             for (let i = 0; i < input.length; i++) {
                 const char = input[i];
-                const phonetic = phoneticAlphabet[char];
+                const phonetic = alphabet[char];
                 
                 if (phonetic) {
                     result.push(`<span style="display: inline-block; margin-right: 8px;"><strong style="color: var(--accent-blue); font-size: 1.2em;">${char}</strong> as in <strong>${phonetic}</strong></span>`);
@@ -1807,11 +1907,12 @@
 
         function copyPhoneticToClipboard() {
             const input = phoneticInput.value.toUpperCase().trim();
+            const alphabet = getCurrentAlphabet();
             let textResult = [];
             
             for (let i = 0; i < input.length; i++) {
                 const char = input[i];
-                const phonetic = phoneticAlphabet[char];
+                const phonetic = alphabet[char];
                 if (phonetic) {
                     textResult.push(`${char} as in ${phonetic}`);
                 }

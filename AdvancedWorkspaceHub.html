@@ -1342,6 +1342,26 @@
                 </div>
             </div>
 
+            <!-- Phonetic Alphabet Converter -->
+            <div class="tool-card calculator-card" style="max-width: 100%;">
+                <h2 class="tool-title">📞 Phonetic Alphabet Helper</h2>
+                <div class="calculator-content">
+                    <div class="form-group">
+                        <div class="form-row">
+                            <label class="form-label">Enter Code/Text:</label>
+                            <input type="text" class="form-input" id="phonetic-input" placeholder="e.g., ABC123" style="text-transform: uppercase;">
+                        </div>
+                    </div>
+                    <div class="form-group" id="phonetic-output-container" style="display: none; margin-top: 15px;">
+                        <label class="form-label" style="color: var(--accent-blue); font-weight: 600; margin-bottom: 10px; display: block;">📢 Read to Customer:</label>
+                        <div id="phonetic-output" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(138, 43, 226, 0.08)); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 12px; padding: 20px; font-size: 1.1rem; line-height: 1.8; color: var(--text-primary); font-weight: 500;"></div>
+                    </div>
+                    <button class="btn btn-secondary" id="copy-phonetic-btn" style="margin-top: 15px; display: none;">
+                        📋 Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+
 
 
             <div class="tool-card activity-logger full-width">
@@ -1736,6 +1756,83 @@
     // New listeners for data size/unit changes
     if (totalDataSizeInput) totalDataSizeInput.addEventListener('input', updateProratedCalculations);
     if (dataUnitSelect) dataUnitSelect.addEventListener('change', updateProratedCalculations);
+
+        // Phonetic Alphabet Helper
+        const phoneticInput = document.getElementById('phonetic-input');
+        const phoneticOutput = document.getElementById('phonetic-output');
+        const phoneticOutputContainer = document.getElementById('phonetic-output-container');
+        const copyPhoneticBtn = document.getElementById('copy-phonetic-btn');
+
+        // NATO Phonetic Alphabet (Professional Standard)
+        const phoneticAlphabet = {
+            'A': 'Alpha', 'B': 'Bravo', 'C': 'Charlie', 'D': 'Delta', 
+            'E': 'Echo', 'F': 'Foxtrot', 'G': 'Golf', 'H': 'Hotel',
+            'I': 'India', 'J': 'Juliett', 'K': 'Kilo', 'L': 'Lima',
+            'M': 'Mike', 'N': 'November', 'O': 'Oscar', 'P': 'Papa',
+            'Q': 'Quebec', 'R': 'Romeo', 'S': 'Sierra', 'T': 'Tango',
+            'U': 'Uniform', 'V': 'Victor', 'W': 'Whiskey', 'X': 'X-ray',
+            'Y': 'Yankee', 'Z': 'Zulu',
+            '0': 'Zero', '1': 'One', '2': 'Two', '3': 'Three', '4': 'Four',
+            '5': 'Five', '6': 'Six', '7': 'Seven', '8': 'Eight', '9': 'Nine',
+            '-': 'Dash', '_': 'Underscore', '.': 'Dot', '@': 'At',
+            '#': 'Hash', '*': 'Star', '/': 'Slash', '\\': 'Backslash',
+            '+': 'Plus', '=': 'Equals', ' ': 'Space'
+        };
+
+        function convertToPhonetic() {
+            const input = phoneticInput.value.toUpperCase().trim();
+            
+            if (!input) {
+                phoneticOutputContainer.style.display = 'none';
+                copyPhoneticBtn.style.display = 'none';
+                return;
+            }
+
+            let result = [];
+            for (let i = 0; i < input.length; i++) {
+                const char = input[i];
+                const phonetic = phoneticAlphabet[char];
+                
+                if (phonetic) {
+                    result.push(`<span style="display: inline-block; margin-right: 8px;"><strong style="color: var(--accent-blue); font-size: 1.2em;">${char}</strong> as in <strong>${phonetic}</strong></span>`);
+                } else {
+                    result.push(`<span style="display: inline-block; margin-right: 8px;"><strong style="color: #ff6b6b;">${char}</strong> <em>(unknown)</em></span>`);
+                }
+            }
+
+            phoneticOutput.innerHTML = result.join('<br>');
+            phoneticOutputContainer.style.display = 'block';
+            copyPhoneticBtn.style.display = 'inline-block';
+        }
+
+        function copyPhoneticToClipboard() {
+            const input = phoneticInput.value.toUpperCase().trim();
+            let textResult = [];
+            
+            for (let i = 0; i < input.length; i++) {
+                const char = input[i];
+                const phonetic = phoneticAlphabet[char];
+                if (phonetic) {
+                    textResult.push(`${char} as in ${phonetic}`);
+                }
+            }
+
+            const textToCopy = textResult.join('\n');
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showNotification('✅ Copied to clipboard!');
+                copyPhoneticBtn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    copyPhoneticBtn.textContent = '📋 Copy to Clipboard';
+                }, 2000);
+            }).catch(() => {
+                showNotification('❌ Failed to copy');
+            });
+        }
+
+        phoneticInput.addEventListener('input', convertToPhonetic);
+        copyPhoneticBtn.addEventListener('click', copyPhoneticToClipboard);
 
         // Activity Logger functionality
         // Initialize with some demo data to show persistence

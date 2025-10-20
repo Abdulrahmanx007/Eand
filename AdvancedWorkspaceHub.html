@@ -1300,10 +1300,10 @@
 
                         <!-- New: Total Data Size and Unit -->
                         <div class="form-group">
-                            <div class="form-row">
-                                <label class="form-label">Total Data Size:</label>
-                                <input type="number" class="form-input" id="total-data-size" step="0.01" placeholder="e.g. 10">
-                                <select id="data-unit" class="form-input" style="max-width:100px;">
+                            <div class="form-row" style="display: flex; align-items: center; gap: 8px;">
+                                <label class="form-label" style="min-width: 120px;">Total Data Size:</label>
+                                <input type="number" class="form-input" id="total-data-size" step="0.01" placeholder="e.g. 10" style="flex: 1;">
+                                <select id="data-unit" class="form-input" style="width: 80px; flex-shrink: 0;">
                                     <option value="GB">GB</option>
                                     <option value="MB">MB</option>
                                 </select>
@@ -1333,13 +1333,6 @@
                             <div class="form-row">
                                 <label class="form-label">Prorated Data:</label>
                                 <input type="text" class="form-input" id="prorated-data" readonly placeholder="0.00 GB / MB">
-                            </div>
-                        </div>
-
-                        <div class="form-group" id="proratedExplanationContainer" style="display: none; margin-top: 15px;">
-                            <label class="form-label" style="color: var(--accent-purple); font-weight: 600;">Smart Explanation:</label>
-                            <div style="background: rgba(157, 78, 221, 0.08); border: 1px solid rgba(157, 78, 221, 0.2); border-radius: 12px; padding: 15px; font-size: 0.9rem; line-height: 1.5; color: var(--text-primary);">
-                                <div id="proratedExplanation"></div>
                             </div>
                         </div>
                     </div>
@@ -1790,8 +1783,6 @@
     const daysInMonthInput = document.getElementById('days-in-month');
     const remainingDaysInput = document.getElementById('remaining-days');
     const proratedPriceInput = document.getElementById('prorated-price');
-    const proratedExplanationContainer = document.getElementById('proratedExplanationContainer');
-    const proratedExplanation = document.getElementById('proratedExplanation');
     // New elements for data size
     const totalDataSizeInput = document.getElementById('total-data-size');
     const dataUnitSelect = document.getElementById('data-unit');
@@ -1819,44 +1810,6 @@
                 proratedDataOutput.value = `${proratedDataGB.toFixed(2)} GB (${Math.round(proratedDataMB)} MB)`;
             } else {
                 proratedDataOutput.value = `${Math.round(proratedDataMB)} MB (${proratedDataGB.toFixed(3)} GB)`;
-            }
-
-            // Smart Explanation logic with word-by-word typing
-            const explanationVariations = [
-                `Let me explain each part of your bill:
-<br><b>Total Price</b>: This is the regular monthly price for your package, which is <b>${totalPrice.toFixed(2)} AED</b>.
-<br><b>Remaining Days</b>: These are the days left in the current month for which you will be billed, which is <b>${remainingDays}</b> days.
-<br><b>Prorated Price</b>: This is the amount you pay for just the remaining days this month, which is <b>${proratedPrice.toFixed(2)} AED</b>. Next month, you will pay the full monthly price. If you have any questions, I am happy to explain further.`,
-                `Here is a breakdown for you:
-<br><b>Total Price</b>: The standard monthly cost of your package (<b>${totalPrice.toFixed(2)} AED</b>).
-<br><b>Remaining Days</b>: The number of days you will use the service this month (<b>${remainingDays}</b>).
-<br><b>Prorated Price</b>: The charge for just those days (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, you will be billed the full monthly price.`,
-                `To clarify:
-<br><b>Total Price</b> is your usual monthly fee (<b>${totalPrice.toFixed(2)} AED</b>).
-<br><b>Remaining Days</b> is how many days are left in the month (<b>${remainingDays}</b>).
-<br><b>Prorated Price</b> is what you pay for those days only (<b>${proratedPrice.toFixed(2)} AED</b>). Full billing starts next month.`,
-                `Your bill includes:
-<br><b>Total Price</b>: The monthly package price (<b>${totalPrice.toFixed(2)} AED</b>).
-<br><b>Remaining Days</b>: Days left in the month (<b>${remainingDays}</b>).
-<br><b>Prorated Price</b>: The amount for just those days (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, you pay the full monthly price.`,
-                `For your reference:
-<br><b>Total Price</b>: Monthly cost (<b>${totalPrice.toFixed(2)} AED</b>).
-<br><b>Remaining Days</b>: Days you will be billed for (<b>${remainingDays}</b>).
-<br><b>Prorated Price</b>: Your charge for this month (<b>${proratedPrice.toFixed(2)} AED</b>). Next month, the full monthly price applies.`
-            ];
-                if (totalPrice > 0 || totalDataSize > 0) {
-                const randomExplanation = explanationVariations[Math.floor(Math.random() * explanationVariations.length)];
-                proratedExplanation.innerHTML = '';
-                proratedExplanationContainer.style.display = 'block';
-                proratedExplanationContainer.style.opacity = '0';
-                setTimeout(() => {
-                    proratedExplanationContainer.style.transition = 'opacity 0.3s ease';
-                    proratedExplanationContainer.style.opacity = '1';
-                    typeWriterWordByWord(proratedExplanation, randomExplanation, 25);
-                }, 100);
-            } else {
-                proratedExplanation.innerHTML = '';
-                proratedExplanationContainer.style.display = 'none';
             }
         }
         

@@ -28,7 +28,7 @@ class AdminManager {
             this.adminPassword = session.password;
             this.githubToken = this.decrypt(session.token);
             this.showDashboard();
-            this.loadFiles();
+            this.loadFilesLocal();
             this.startSessionTimer();
         } else {
             this.showLogin();

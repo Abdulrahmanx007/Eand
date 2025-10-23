@@ -156,11 +156,14 @@ class AdminManager {
             if (savedFiles) {
                 this.files = JSON.parse(savedFiles);
                 console.log('loadFilesLocal: Parsed files =', this.files);
+                
+                // Always try to refresh from GitHub in background (even if we have local files)
+                this.tryAutoPullFromGitHub();
             } else {
                 this.files = [];
                 console.log('loadFilesLocal: No saved files, using empty array');
                 
-                // If no local files, try to pull from GitHub silently
+                // If no local files, try to pull from GitHub and wait for it
                 await this.tryAutoPullFromGitHub();
             }
             
@@ -573,7 +576,7 @@ class AdminManager {
     }
 
     async tryAutoPullFromGitHub() {
-        // Silently try to pull files from GitHub on first login
+        // Silently try to pull files from GitHub on login
         const token = this.getSavedToken();
         if (!token) {
             console.log('No token configured, skipping auto-pull');
@@ -600,6 +603,9 @@ class AdminManager {
                     const base64Content = fileData.content.replace(/\n/g, '');
                     const dataUrl = `data:application/octet-stream;base64,${base64Content}`;
                     
+                    // Check if file already exists locally
+                    const existingIndex = this.files.findIndex(f => f.name === file.name);
+                    
                     const fileObj = {
                         name: file.name,
                         size: file.size,
@@ -609,7 +615,14 @@ class AdminManager {
                         sha: file.sha
                     };
                     
-                    this.files.push(fileObj);
+                    if (existingIndex >= 0) {
+                        // Update existing file with latest from GitHub
+                        this.files[existingIndex] = fileObj;
+                    } else {
+                        // Add new file from GitHub
+                        this.files.push(fileObj);
+                    }
+                    
                     successCount++;
                 } catch (err) {
                     console.warn(`Failed to download ${file.name}:`, err);
@@ -618,8 +631,11 @@ class AdminManager {
             
             if (successCount > 0) {
                 this.saveFilesLocal();
+                // Refresh the UI with the updated files
+                this.renderFiles();
+                this.updateStats();
                 console.log(`Auto-pulled ${successCount} file(s) from GitHub`);
-                this.showToast(`📥 Loaded ${successCount} file(s) from GitHub`, 'success');
+                this.showToast(`📥 Synced ${successCount} file(s) from GitHub`, 'success');
             }
         } catch (error) {
             // Silent fail - user can manually pull if needed

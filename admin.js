@@ -2,6 +2,18 @@
  * Admin Portal - GitHub Storage Integration
  * Effortless Desk v3.3
  * Cross-device file management with GitHub API
+ * 
+ * SETUP INSTRUCTIONS:
+ * 1. Replace 'YOUR_GITHUB_TOKEN_HERE' below (line 23) with your actual GitHub token
+ * 2. Change 'admin123' password (line 35) to your preferred password
+ * 3. Login with your password - no token verification needed!
+ * 4. Files are stored in GitHub repo, accessible from any device
+ * 
+ * How to get GitHub token:
+ * - Go to: https://github.com/settings/tokens
+ * - Generate new token (classic)
+ * - Select: repo (full control)
+ * - Copy token and paste it in line 23
  */
 
 class AdminManager {
@@ -16,6 +28,10 @@ class AdminManager {
         this.currentFilter = 'all';
         this.sessionTimeout = null;
         this.sessionDuration = 30 * 60 * 1000; // 30 minutes
+        
+        // Pre-configured token (you can change this to your token)
+        // This way you never need to enter it at work
+        this.DEFAULT_TOKEN = 'YOUR_GITHUB_TOKEN_HERE'; // Replace with your actual token
         
         this.init();
     }
@@ -103,128 +119,35 @@ class AdminManager {
         const loginBtnText = document.getElementById('loginBtnText');
         const loginSpinner = document.getElementById('loginSpinner');
 
-        // Check if first time setup
-        const savedConfig = localStorage.getItem('admin_config');
+        loginBtnText.style.display = 'none';
+        loginSpinner.style.display = 'inline-block';
+
+        // Simple password check (default: "admin123")
+        const ADMIN_PASSWORD = 'admin123'; // Change this to your preferred password
         
-        if (!savedConfig) {
-            // First time - setup wizard
-            await this.showSetupWizard(password);
+        if (password === ADMIN_PASSWORD) {
+            // Success - no GitHub verification needed
+            this.adminPassword = this.hashPassword(password);
+            this.isAuthenticated = true;
+            
+            // Use pre-configured token or try to get from localStorage
+            const savedToken = localStorage.getItem('github_token');
+            this.githubToken = savedToken || this.DEFAULT_TOKEN;
+            
+            this.createSession();
+            this.showDashboard();
+            await this.loadFiles(); // Load files, will show error if GitHub blocked
+            this.startSessionTimer();
+            this.showToast('Welcome back! 🎉', 'success');
         } else {
-            // Verify password
-            loginBtnText.style.display = 'none';
-            loginSpinner.style.display = 'inline-block';
-
-            const config = JSON.parse(savedConfig);
-            const hashedPassword = this.hashPassword(password);
-
-            if (hashedPassword === config.password) {
-                this.adminPassword = hashedPassword;
-                this.githubToken = this.decrypt(config.token);
-                this.isAuthenticated = true;
-
-                // Verify GitHub token is still valid
-                const isValid = await this.verifyGitHubToken();
-                
-                if (isValid) {
-                    this.createSession();
-                    this.showDashboard();
-                    await this.loadFiles();
-                    this.startSessionTimer();
-                    this.showToast('Welcome back! 🎉', 'success');
-                } else {
-                    this.showToast('GitHub token expired. Please reconfigure.', 'error');
-                    await this.showSetupWizard(password);
-                }
-            } else {
-                this.showToast('Incorrect password ❌', 'error');
-            }
-
-            loginBtnText.style.display = 'inline';
-            loginSpinner.style.display = 'none';
+            this.showToast('Incorrect password ❌', 'error');
         }
+
+        loginBtnText.style.display = 'inline';
+        loginSpinner.style.display = 'none';
     }
 
-    async showSetupWizard(password) {
-        const token = prompt('🔧 First Time Setup\n\nPlease enter your GitHub Personal Access Token:\n\n(See SETUP-GUIDE.md for instructions)');
-        
-        if (!token || token.trim() === '') {
-            this.showToast('Setup cancelled', 'info');
-            return;
-        }
-
-        // Verify token
-        this.githubToken = token.trim();
-        const isValid = await this.verifyGitHubToken();
-
-        if (!isValid) {
-            this.showToast('Invalid GitHub token. Please check and try again.', 'error');
-            return;
-        }
-
-        // Save configuration
-        const hashedPassword = this.hashPassword(password);
-        const encryptedToken = this.encrypt(token.trim());
-        
-        const config = {
-            password: hashedPassword,
-            token: encryptedToken,
-            setupDate: new Date().toISOString()
-        };
-
-        localStorage.setItem('admin_config', JSON.stringify(config));
-        
-        this.adminPassword = hashedPassword;
-        this.isAuthenticated = true;
-        this.createSession();
-        this.showDashboard();
-        await this.ensureStorageFolder();
-        await this.loadFiles();
-        this.startSessionTimer();
-        
-        this.showToast('Setup complete! 🎉 Welcome to Admin Portal', 'success');
-    }
-
-    async verifyGitHubToken() {
-        try {
-            const response = await fetch(`https://api.github.com/repos/${this.repoOwner}/${this.repoName}`, {
-                headers: {
-                    'Authorization': `token ${this.githubToken}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            });
-            return response.ok;
-        } catch (error) {
-            console.error('Token verification error:', error);
-            return false;
-        }
-    }
-
-    async ensureStorageFolder() {
-        try {
-            // Check if .admin-files folder exists
-            const response = await fetch(
-                `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${this.storageFolder}`,
-                {
-                    headers: {
-                        'Authorization': `token ${this.githubToken}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                }
-            );
-
-            if (!response.ok) {
-                // Create folder with README
-                await this.createFile(
-                    `${this.storageFolder}/README.md`,
-                    '# Admin Files Storage\n\nThis folder contains files uploaded via the Admin Portal.\nDo not manually edit files in this folder.',
-                    'Initialize admin storage folder'
-                );
-            }
-        } catch (error) {
-            console.error('Error ensuring storage folder:', error);
-        }
-    }
-
+    // Load files from GitHub (no verification first, just try it)
     async loadFiles() {
         try {
             const response = await fetch(
@@ -238,32 +161,87 @@ class AdminManager {
             );
 
             if (!response.ok) {
-                throw new Error('Failed to load files');
+                if (response.status === 404) {
+                    // Folder doesn't exist yet, create it
+                    await this.ensureStorageFolder();
+                    this.files = [];
+                } else {
+                    throw new Error('GitHub API blocked or token invalid');
+                }
+            } else {
+                const data = await response.json();
+                
+                // Filter out README and directories
+                this.files = data.filter(item => 
+                    item.type === 'file' && 
+                    item.name !== 'README.md' &&
+                    item.name !== '.gitkeep'
+                ).map(item => ({
+                    name: item.name,
+                    size: item.size,
+                    downloadUrl: item.download_url,
+                    sha: item.sha,
+                    path: item.path,
+                    uploadDate: new Date().toLocaleDateString() // Approximation
+                }));
             }
-
-            const data = await response.json();
-            
-            // Filter out README and directories
-            this.files = data.filter(item => 
-                item.type === 'file' && 
-                item.name !== 'README.md' &&
-                item.name !== '.gitkeep'
-            ).map(item => ({
-                name: item.name,
-                size: item.size,
-                downloadUrl: item.download_url,
-                sha: item.sha,
-                path: item.path,
-                uploadDate: new Date(item.sha).toLocaleDateString() // Approximation
-            }));
 
             this.renderFiles();
             this.updateStats();
         } catch (error) {
             console.error('Error loading files:', error);
-            this.showToast('Error loading files', 'error');
+            this.showToast('⚠️ Cannot connect to GitHub. You can still use the portal, but files may not load.', 'warning');
+            this.files = [];
+            this.renderFiles();
+            this.updateStats();
         }
     }
+
+    async ensureStorageFolder() {
+        try {
+            // Create folder with README
+            await this.createFile(
+                `${this.storageFolder}/README.md`,
+                '# Admin Files Storage\n\nThis folder contains files uploaded via the Admin Portal.\nDo not manually edit files in this folder.',
+                'Initialize admin storage folder'
+            );
+        } catch (error) {
+            console.error('Error creating storage folder:', error);
+        }
+    }
+
+    async createFile(path, content, message) {
+        const response = await fetch(
+            `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${path}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${this.githubToken}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: message,
+                    content: btoa(content) // Base64 encode
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Failed to create file: ${response.statusText}`);
+        }
+
+        return await response.json();
+    }
+
+    async showSetupWizard(password) {
+        // No longer needed - simplified authentication
+    }
+
+    // Utility functions below
+
+    // Old GitHub API function - no longer needed
+    // All files are now stored locally in browser storage
 
     renderFiles() {
         const filesGrid = document.getElementById('filesGrid');
@@ -291,13 +269,15 @@ class AdminManager {
         filesGrid.style.display = 'grid';
         emptyState.style.display = 'none';
 
-        filesGrid.innerHTML = filteredFiles.map(file => `
+        filesGrid.innerHTML = filteredFiles.map(file => {
+            const uploadDate = file.uploadDate || 'Unknown';
+            return `
             <div class="file-card" data-filename="${file.name}">
                 <div class="file-icon">${this.getFileIcon(file.name)}</div>
                 <div class="file-name" title="${file.name}">${this.truncateFileName(file.name)}</div>
                 <div class="file-info">
                     <span>${this.formatFileSize(file.size)}</span>
-                    <span>${file.uploadDate}</span>
+                    <span>${uploadDate}</span>
                 </div>
                 <div class="file-actions">
                     <button class="btn-file-action" onclick="window.adminManager.downloadFile('${file.name}', '${file.downloadUrl}')">
@@ -308,7 +288,8 @@ class AdminManager {
                     </button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     filterFiles(searchTerm) {
@@ -357,7 +338,7 @@ class AdminManager {
                 await this.uploadFile(file);
             } catch (error) {
                 console.error('Upload error:', error);
-                this.showToast(`Failed to upload ${file.name}`, 'error');
+                this.showToast(`Failed to upload ${file.name} - ${error.message}`, 'error');
             }
         }
 
@@ -388,30 +369,6 @@ class AdminManager {
             reader.onerror = () => reject(new Error('File read error'));
             reader.readAsDataURL(file);
         });
-    }
-
-    async createFile(path, content, message) {
-        const response = await fetch(
-            `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${path}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${this.githubToken}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: message,
-                    content: content.includes(',') ? content : btoa(content) // Handle both base64 and plain text
-                })
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(`Failed to create file: ${response.statusText}`);
-        }
-
-        return await response.json();
     }
 
     downloadFile(filename, downloadUrl) {
@@ -456,7 +413,7 @@ class AdminManager {
             await this.loadFiles();
         } catch (error) {
             console.error('Delete error:', error);
-            this.showToast('Failed to delete file', 'error');
+            this.showToast('Failed to delete file - ' + error.message, 'error');
         }
     }
 

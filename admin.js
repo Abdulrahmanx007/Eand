@@ -452,6 +452,123 @@ class AdminManager {
         return await response.json();
     }
 
+    async tryGitHubListFiles() {
+        const token = this.getSavedToken();
+        if (!token) throw new Error('No GitHub token configured');
+
+        const response = await fetch(
+            `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${this.storageFolder}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            }
+        );
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                // Folder doesn't exist yet, return empty array
+                return [];
+            }
+            const text = await response.text();
+            throw new Error(`GitHub error: ${response.status} ${text}`);
+        }
+
+        return await response.json();
+    }
+
+    async tryGitHubGetFile(path) {
+        const token = this.getSavedToken();
+        if (!token) throw new Error('No GitHub token configured');
+
+        const response = await fetch(
+            `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${path}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            }
+        );
+
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`GitHub error: ${response.status} ${text}`);
+        }
+
+        return await response.json();
+    }
+
+    async pullFromGitHub() {
+        const token = this.getSavedToken();
+        if (!token) {
+            this.showToast('Please configure GitHub token first (Settings → Reconfigure Token)', 'error');
+            return;
+        }
+
+        this.githubToken = token;
+
+        try {
+            this.showToast('🔄 Pulling files from GitHub...', 'info');
+            
+            // Get list of files from GitHub
+            const files = await this.tryGitHubListFiles();
+            
+            if (files.length === 0) {
+                this.showToast('No files found on GitHub', 'info');
+                return;
+            }
+
+            // Download each file and add to local storage
+            let successCount = 0;
+            for (const file of files) {
+                try {
+                    const fileData = await this.tryGitHubGetFile(file.path);
+                    
+                    // Convert base64 content to data URL
+                    const base64Content = fileData.content.replace(/\n/g, '');
+                    const dataUrl = `data:application/octet-stream;base64,${base64Content}`;
+                    
+                    // Check if file already exists locally
+                    const existingIndex = this.files.findIndex(f => f.name === file.name);
+                    
+                    const fileObj = {
+                        name: file.name,
+                        size: file.size,
+                        type: 'application/octet-stream',
+                        content: dataUrl,
+                        uploadDate: new Date().toISOString(),
+                        sha: file.sha
+                    };
+                    
+                    if (existingIndex >= 0) {
+                        // Update existing file
+                        this.files[existingIndex] = fileObj;
+                    } else {
+                        // Add new file
+                        this.files.push(fileObj);
+                    }
+                    
+                    successCount++;
+                } catch (err) {
+                    console.warn(`Failed to download ${file.name}:`, err);
+                }
+            }
+            
+            // Save to localStorage
+            this.saveFilesLocal();
+            await this.loadFilesLocal();
+            
+            this.showToast(`✅ Pulled ${successCount} file(s) from GitHub`, 'success');
+        } catch (error) {
+            console.error('Pull from GitHub failed:', error);
+            this.showToast('❌ Failed to pull from GitHub: ' + error.message, 'error');
+        }
+    }
+
     // Queue pending operations (when GitHub blocked)
     queuePendingOperation(op) {
         try {
@@ -580,7 +697,7 @@ class AdminManager {
     }
 
     async showSettings() {
-        const menu = `Admin Settings\n\n1) Reconfigure GitHub Token\n2) Test GitHub Connection & Sync pending ops\n3) Change Password\n4) View Storage Info\n\nEnter number to choose:`;
+        const menu = `Admin Settings\n\n1) Reconfigure GitHub Token\n2) Test GitHub Connection & Sync pending ops\n3) Pull files from GitHub\n4) Change Password\n5) View Storage Info\n\nEnter number to choose:`;
         const choice = prompt(menu);
         if (!choice) return;
 
@@ -597,6 +714,9 @@ class AdminManager {
             // Test GitHub connection and try to flush pending ops
             await this.testGitHubConnection();
         } else if (choice === '3') {
+            // Pull files from GitHub to local storage
+            await this.pullFromGitHub();
+        } else if (choice === '4') {
             const pwd = prompt('Enter new admin password:');
             if (pwd && pwd.trim() !== '') {
                 const cfg = JSON.parse(localStorage.getItem('admin_config') || '{}');
@@ -604,7 +724,7 @@ class AdminManager {
                 localStorage.setItem('admin_config', JSON.stringify(cfg));
                 this.showToast('Password updated', 'success');
             }
-        } else if (choice === '4') {
+        } else if (choice === '5') {
             const pending = JSON.parse(localStorage.getItem('admin_pending_ops') || '[]');
             alert(`Storage Folder: ${this.storageFolder}\nLocal files: ${this.files.length}\nPending ops: ${pending.length}`);
         }

@@ -648,7 +648,7 @@ class AdminManager {
     createSession() {
         const session = {
             password: this.adminPassword,
-            token: this.encrypt(this.githubToken),
+            token: this.githubToken ? this.encrypt(this.githubToken) : '',
             expiry: Date.now() + this.sessionDuration
         };
         sessionStorage.setItem('admin_session', JSON.stringify(session));
@@ -693,6 +693,7 @@ class AdminManager {
 
     encrypt(text) {
         // Simple XOR encryption - in production use stronger encryption
+        if (!text) return '';
         const key = 'effortless-desk-admin-2025';
         let result = '';
         for (let i = 0; i < text.length; i++) {
@@ -703,6 +704,7 @@ class AdminManager {
 
     decrypt(encrypted) {
         try {
+            if (!encrypted) return null;
             const decoded = atob(encrypted);
             const key = 'effortless-desk-admin-2025';
             let result = '';

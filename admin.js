@@ -580,6 +580,7 @@ class AdminManager {
         const token = this.getSavedToken();
         if (!token) {
             console.log('No token configured, skipping auto-pull');
+            console.log('👉 Configure token in Settings to sync files across devices');
             return;
         }
 
@@ -638,8 +639,15 @@ class AdminManager {
                 this.showToast(`📥 Synced ${successCount} file(s) from GitHub`, 'success');
             }
         } catch (error) {
-            // Silent fail - user can manually pull if needed
+            // Show error to user so they know sync failed
             console.log('Auto-pull failed (network may be restricted):', error.message);
+            
+            // Only show files count if we have local files
+            if (this.files.length > 0) {
+                this.showToast(`⚠️ Showing ${this.files.length} local file(s). GitHub sync unavailable.`, 'warning');
+            } else {
+                this.showToast('⚠️ No local files. Configure token in Settings to sync from GitHub.', 'warning');
+            }
         }
     }
 

@@ -20,7 +20,7 @@ class AdminManager {
         this.init();
     }
 
-    init() {
+    async init() {
         // Check if already authenticated
         const session = this.getSession();
         if (session && session.expiry > Date.now()) {
@@ -28,7 +28,7 @@ class AdminManager {
             this.adminPassword = session.password;
             this.githubToken = this.decrypt(session.token);
             this.showDashboard();
-            this.loadFilesLocal();
+            await this.loadFilesLocal();
             this.startSessionTimer();
         } else {
             this.showLogin();
@@ -110,23 +110,28 @@ class AdminManager {
         loginBtnText.style.display = 'none';
         loginSpinner.style.display = 'inline-block';
 
-        const hashedPassword = this.hashPassword(password);
+        try {
+            const hashedPassword = this.hashPassword(password);
 
-        if (hashedPassword === ADMIN_PASSWORD_HASH || password === 'admin123') {
-            // Success - login without GitHub verification
-            this.adminPassword = hashedPassword;
-            this.isAuthenticated = true;
-            this.createSession();
-            this.showDashboard();
-            await this.loadFilesLocal(); // Load from local storage
-            this.startSessionTimer();
-            this.showToast('Welcome back! 🎉', 'success');
-        } else {
-            this.showToast('Incorrect password ❌', 'error');
+            if (hashedPassword === ADMIN_PASSWORD_HASH || password === 'admin123') {
+                // Success - login without GitHub verification
+                this.adminPassword = hashedPassword;
+                this.isAuthenticated = true;
+                this.createSession();
+                this.showDashboard();
+                await this.loadFilesLocal(); // Load from local storage
+                this.startSessionTimer();
+                this.showToast('Welcome back! 🎉', 'success');
+            } else {
+                this.showToast('Incorrect password ❌', 'error');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            this.showToast('Login error: ' + error.message, 'error');
+        } finally {
+            loginBtnText.style.display = 'inline';
+            loginSpinner.style.display = 'none';
         }
-
-        loginBtnText.style.display = 'inline';
-        loginSpinner.style.display = 'none';
     }
 
     // Load files from local storage (no GitHub required)

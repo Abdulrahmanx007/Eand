@@ -28,6 +28,9 @@ class AdminManager {
             this.adminPassword = session.password;
             this.githubToken = this.decrypt(session.token);
             this.showDashboard();
+            
+            // Wait for DOM to render
+            await new Promise(resolve => setTimeout(resolve, 50));
             await this.loadFilesLocal();
             this.startSessionTimer();
         } else {
@@ -121,6 +124,9 @@ class AdminManager {
                 // Show dashboard first so DOM elements exist
                 this.showDashboard();
                 
+                // Wait a tiny bit for DOM to fully render
+                await new Promise(resolve => setTimeout(resolve, 50));
+                
                 // Then load files and update UI
                 await this.loadFilesLocal(); // Load from local storage
                 
@@ -185,17 +191,25 @@ class AdminManager {
         const filesGrid = document.getElementById('filesGrid');
         const emptyState = document.getElementById('emptyState');
 
-        if (!filesGrid) return;
+        if (!filesGrid || !emptyState) {
+            console.warn('renderFiles: filesGrid or emptyState not found in DOM');
+            return;
+        }
+
+        // Ensure this.files is an array
+        if (!Array.isArray(this.files)) {
+            this.files = [];
+        }
 
         // Apply filter
         let filteredFiles = this.files;
 
         if (this.currentFilter === 'images') {
-            filteredFiles = this.files.filter(f => this.isImageFile(f.name));
+            filteredFiles = this.files.filter(f => f && this.isImageFile(f.name));
         } else if (this.currentFilter === 'documents') {
-            filteredFiles = this.files.filter(f => this.isDocumentFile(f.name));
+            filteredFiles = this.files.filter(f => f && this.isDocumentFile(f.name));
         } else if (this.currentFilter === 'other') {
-            filteredFiles = this.files.filter(f => !this.isImageFile(f.name) && !this.isDocumentFile(f.name));
+            filteredFiles = this.files.filter(f => f && !this.isImageFile(f.name) && !this.isDocumentFile(f.name));
         }
 
         if (filteredFiles.length === 0) {

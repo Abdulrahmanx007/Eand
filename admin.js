@@ -389,10 +389,15 @@ class AdminManager {
     getSavedToken() {
         try {
             const cfg = localStorage.getItem('admin_config');
+            console.log('getSavedToken: cfg =', cfg);
             if (!cfg) return null;
             const parsed = JSON.parse(cfg);
-            return this.decrypt(parsed.token) || null;
+            console.log('getSavedToken: parsed =', parsed);
+            const decrypted = this.decrypt(parsed.token);
+            console.log('getSavedToken: decrypted token =', decrypted);
+            return decrypted || null;
         } catch (e) {
+            console.error('getSavedToken error:', e);
             return null;
         }
     }
@@ -566,6 +571,9 @@ class AdminManager {
             return;
         }
 
+        // Update the instance token
+        this.githubToken = token;
+
         this.showToast('🔄 Syncing pending operations...', 'info');
         await this.flushPendingOperations();
         this.updatePendingOpsWidget();
@@ -608,6 +616,9 @@ class AdminManager {
             this.showToast('No GitHub token configured. Please reconfigure first.', 'error');
             return;
         }
+
+        // Update the instance token
+        this.githubToken = token;
 
         try {
             const res = await fetch(`https://api.github.com/`, { headers: { 'Authorization': `token ${token}` } });

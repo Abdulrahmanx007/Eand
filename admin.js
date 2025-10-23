@@ -409,6 +409,7 @@ class AdminManager {
             const pending = JSON.parse(localStorage.getItem('admin_pending_ops') || '[]');
             pending.push(op);
             localStorage.setItem('admin_pending_ops', JSON.stringify(pending));
+            this.updatePendingOpsWidget(); // Update widget immediately
         } catch (e) {
             console.error('Failed to queue operation', e);
         }
@@ -439,6 +440,7 @@ class AdminManager {
         const remaining = pending.filter(p => !succeeded.includes(p));
         localStorage.setItem('admin_pending_ops', JSON.stringify(remaining));
         if (succeeded.length) this.showToast(`✅ Flushed ${succeeded.length} pending operation(s)`, 'success');
+        this.updatePendingOpsWidget(); // Update widget after flush
     }
 
     async deleteFile(filename, sha) {
@@ -484,6 +486,45 @@ class AdminManager {
             const total = this.files.reduce((sum, file) => sum + file.size, 0);
             totalSize.textContent = this.formatFileSize(total);
         }
+
+        // Update pending operations widget
+        this.updatePendingOpsWidget();
+    }
+
+    updatePendingOpsWidget() {
+        const widget = document.getElementById('pendingOpsWidget');
+        const countEl = document.getElementById('pendingOpsCount');
+
+        if (!widget || !countEl) return;
+
+        const pending = JSON.parse(localStorage.getItem('admin_pending_ops') || '[]');
+        const count = pending.length;
+
+        if (count > 0) {
+            widget.classList.remove('hidden');
+            countEl.textContent = count;
+        } else {
+            widget.classList.add('hidden');
+        }
+    }
+
+    async syncNow() {
+        const pending = JSON.parse(localStorage.getItem('admin_pending_ops') || '[]');
+        
+        if (!pending.length) {
+            this.showToast('No pending operations to sync', 'info');
+            return;
+        }
+
+        const token = this.getSavedToken();
+        if (!token) {
+            this.showToast('Please configure GitHub token first (Settings → Reconfigure Token)', 'error');
+            return;
+        }
+
+        this.showToast('🔄 Syncing pending operations...', 'info');
+        await this.flushPendingOperations();
+        this.updatePendingOpsWidget();
     }
 
     async showSettings() {

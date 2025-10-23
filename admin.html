@@ -452,6 +452,73 @@
             font-size: 14px;
         }
 
+        /* Pending Operations Widget */
+        .pending-ops-widget {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1));
+            border: 2px solid rgba(255, 193, 7, 0.4);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .pending-ops-widget.hidden {
+            display: none;
+        }
+
+        .pending-ops-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pending-ops-icon {
+            font-size: 24px;
+        }
+
+        .pending-ops-text {
+            color: var(--text-primary);
+        }
+
+        .pending-ops-text strong {
+            color: #ffc107;
+            font-weight: 700;
+        }
+
+        .pending-ops-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .btn-sync-now {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ffc107, #ff9800);
+            border: none;
+            border-radius: 8px;
+            color: #111;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sync-now:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+        }
+
+        .btn-sync-now:active {
+            transform: translateY(0);
+        }
+
         /* Toast Notifications */
         .toast {
             position: fixed;
@@ -601,6 +668,23 @@
                         <span>Logout</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- Pending Operations Widget -->
+            <div class="pending-ops-widget hidden" id="pendingOpsWidget">
+                <div class="pending-ops-info">
+                    <div class="pending-ops-icon">⏳</div>
+                    <div>
+                        <div class="pending-ops-text">
+                            <strong id="pendingOpsCount">0</strong> operation(s) pending sync to GitHub
+                        </div>
+                        <div class="pending-ops-hint">These will sync when GitHub is reachable</div>
+                    </div>
+                </div>
+                <button class="btn-sync-now" onclick="window.adminManager.syncNow()">
+                    <span>🔄</span>
+                    <span>Sync Now</span>
+                </button>
             </div>
 
             <!-- Upload Section -->

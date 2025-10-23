@@ -117,9 +117,15 @@ class AdminManager {
                 // Success - login without GitHub verification
                 this.adminPassword = hashedPassword;
                 this.isAuthenticated = true;
-                this.createSession();
+                
+                // Show dashboard first so DOM elements exist
                 this.showDashboard();
+                
+                // Then load files and update UI
                 await this.loadFilesLocal(); // Load from local storage
+                
+                // Create session and start timer
+                this.createSession();
                 this.startSessionTimer();
                 this.showToast('Welcome back! 🎉', 'success');
             } else {

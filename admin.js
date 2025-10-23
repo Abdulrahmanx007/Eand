@@ -149,19 +149,28 @@ class AdminManager {
     // Load files from local storage (no GitHub required)
     async loadFilesLocal() {
         try {
+            console.log('loadFilesLocal: Starting...');
             const savedFiles = localStorage.getItem('admin_files');
+            console.log('loadFilesLocal: savedFiles =', savedFiles);
+            
             if (savedFiles) {
                 this.files = JSON.parse(savedFiles);
-                this.renderFiles();
-                this.updateStats();
+                console.log('loadFilesLocal: Parsed files =', this.files);
             } else {
                 this.files = [];
-                this.renderFiles();
-                this.updateStats();
+                console.log('loadFilesLocal: No saved files, using empty array');
             }
+            
+            console.log('loadFilesLocal: Calling renderFiles...');
+            this.renderFiles();
+            console.log('loadFilesLocal: Calling updateStats...');
+            this.updateStats();
+            console.log('loadFilesLocal: Complete!');
         } catch (error) {
             console.error('Error loading files:', error);
-            this.showToast('Error loading files', 'error');
+            console.error('Error stack:', error.stack);
+            this.showToast('Error loading files: ' + error.message, 'error');
+            throw error; // Re-throw so handleLogin catches it
         }
     }
 
@@ -188,8 +197,13 @@ class AdminManager {
     // All files are now stored locally in browser storage
 
     renderFiles() {
+        console.log('renderFiles: Starting...');
         const filesGrid = document.getElementById('filesGrid');
         const emptyState = document.getElementById('emptyState');
+
+        console.log('renderFiles: filesGrid =', filesGrid);
+        console.log('renderFiles: emptyState =', emptyState);
+        console.log('renderFiles: this.files =', this.files);
 
         if (!filesGrid || !emptyState) {
             console.warn('renderFiles: filesGrid or emptyState not found in DOM');
@@ -198,11 +212,14 @@ class AdminManager {
 
         // Ensure this.files is an array
         if (!Array.isArray(this.files)) {
+            console.warn('renderFiles: this.files is not an array, setting to []');
             this.files = [];
         }
 
         // Apply filter
         let filteredFiles = this.files;
+
+        console.log('renderFiles: Applying filter, currentFilter =', this.currentFilter);
 
         if (this.currentFilter === 'images') {
             filteredFiles = this.files.filter(f => f && this.isImageFile(f.name));
@@ -211,6 +228,8 @@ class AdminManager {
         } else if (this.currentFilter === 'other') {
             filteredFiles = this.files.filter(f => f && !this.isImageFile(f.name) && !this.isDocumentFile(f.name));
         }
+
+        console.log('renderFiles: filteredFiles =', filteredFiles);
 
         if (filteredFiles.length === 0) {
             filesGrid.style.display = 'none';

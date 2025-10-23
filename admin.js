@@ -159,6 +159,9 @@ class AdminManager {
             } else {
                 this.files = [];
                 console.log('loadFilesLocal: No saved files, using empty array');
+                
+                // If no local files, try to pull from GitHub silently
+                await this.tryAutoPullFromGitHub();
             }
             
             console.log('loadFilesLocal: Calling renderFiles...');
@@ -566,6 +569,61 @@ class AdminManager {
         } catch (error) {
             console.error('Pull from GitHub failed:', error);
             this.showToast('❌ Failed to pull from GitHub: ' + error.message, 'error');
+        }
+    }
+
+    async tryAutoPullFromGitHub() {
+        // Silently try to pull files from GitHub on first login
+        const token = this.getSavedToken();
+        if (!token) {
+            console.log('No token configured, skipping auto-pull');
+            return;
+        }
+
+        this.githubToken = token;
+
+        try {
+            console.log('Attempting auto-pull from GitHub...');
+            const files = await this.tryGitHubListFiles();
+            
+            if (files.length === 0) {
+                console.log('No files on GitHub to pull');
+                return;
+            }
+
+            console.log(`Found ${files.length} file(s) on GitHub, pulling...`);
+
+            let successCount = 0;
+            for (const file of files) {
+                try {
+                    const fileData = await this.tryGitHubGetFile(file.path);
+                    const base64Content = fileData.content.replace(/\n/g, '');
+                    const dataUrl = `data:application/octet-stream;base64,${base64Content}`;
+                    
+                    const fileObj = {
+                        name: file.name,
+                        size: file.size,
+                        type: 'application/octet-stream',
+                        content: dataUrl,
+                        uploadDate: new Date().toISOString(),
+                        sha: file.sha
+                    };
+                    
+                    this.files.push(fileObj);
+                    successCount++;
+                } catch (err) {
+                    console.warn(`Failed to download ${file.name}:`, err);
+                }
+            }
+            
+            if (successCount > 0) {
+                this.saveFilesLocal();
+                console.log(`Auto-pulled ${successCount} file(s) from GitHub`);
+                this.showToast(`📥 Loaded ${successCount} file(s) from GitHub`, 'success');
+            }
+        } catch (error) {
+            // Silent fail - user can manually pull if needed
+            console.log('Auto-pull failed (network may be restricted):', error.message);
         }
     }
 

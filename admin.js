@@ -21,6 +21,9 @@ class AdminManager {
         // To update: btoa('your_token_here')
         this.defaultGithubTokenEncoded = 'Z2hwX29FWURtTjE4SnVtSFR6U3VpWGdweHd6Y1JOQndLQTJsNE4yOA==';
         
+        // Public URL to read files (no auth needed, works everywhere!)
+        this.filesDataUrl = 'https://basher-tech.me/.admin-files/files-data.json';
+        
         this.init();
     }
 
@@ -154,21 +157,19 @@ class AdminManager {
     async loadFilesLocal() {
         try {
             console.log('loadFilesLocal: Starting...');
-            const savedFiles = localStorage.getItem('admin_files');
-            console.log('loadFilesLocal: savedFiles =', savedFiles);
             
-            if (savedFiles) {
-                this.files = JSON.parse(savedFiles);
-                console.log('loadFilesLocal: Parsed files =', this.files);
+            // First, try to load from public URL (works everywhere, even at work!)
+            await this.loadFromPublicUrl();
+            
+            // If that fails or returns nothing, fall back to localStorage
+            if (this.files.length === 0) {
+                const savedFiles = localStorage.getItem('admin_files');
+                console.log('loadFilesLocal: savedFiles from localStorage =', savedFiles);
                 
-                // Always try to refresh from GitHub in background (even if we have local files)
-                this.tryAutoPullFromGitHub();
-            } else {
-                this.files = [];
-                console.log('loadFilesLocal: No saved files, using empty array');
-                
-                // If no local files, try to pull from GitHub and wait for it
-                await this.tryAutoPullFromGitHub();
+                if (savedFiles) {
+                    this.files = JSON.parse(savedFiles);
+                    console.log('loadFilesLocal: Loaded from localStorage, count =', this.files.length);
+                }
             }
             
             console.log('loadFilesLocal: Calling renderFiles...');
@@ -181,6 +182,33 @@ class AdminManager {
             console.error('Error stack:', error.stack);
             this.showToast('Error loading files: ' + error.message, 'error');
             throw error; // Re-throw so handleLogin catches it
+        }
+    }
+
+    async loadFromPublicUrl() {
+        try {
+            console.log('Attempting to load files from public URL:', this.filesDataUrl);
+            
+            // Add cache busting to ensure fresh data
+            const url = `${this.filesDataUrl}?t=${Date.now()}`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.log('Public URL returned status:', response.status);
+                return;
+            }
+            
+            const data = await response.json();
+            console.log('Loaded files from public URL, count:', data.length);
+            
+            if (Array.isArray(data) && data.length > 0) {
+                this.files = data;
+                // Also save to localStorage for offline access
+                this.saveFilesLocal();
+                this.showToast(`📥 Loaded ${data.length} file(s) from cloud`, 'success');
+            }
+        } catch (error) {
+            console.log('Failed to load from public URL (may not exist yet):', error.message);
         }
     }
 
@@ -353,18 +381,8 @@ class AdminManager {
                     this.files.push(fileObj);
                     this.saveFilesLocal();
 
-                    // Try to push to GitHub immediately (on-demand). If it fails, queue the operation.
-                    const path = `${this.storageFolder}/${fileObj.name}`;
-                    try {
-                        // content should be base64 without data: prefix
-                        const base64 = content.split(',')[1] || btoa(content);
-                        await this.tryGitHubCreateFile(path, base64, `Upload ${fileObj.name}`);
-                        this.showToast(`✅ Synced ${fileObj.name} to GitHub`, 'success');
-                    } catch (err) {
-                        console.warn('GitHub upload failed, queuing op:', err.message);
-                        this.queuePendingOperation({ type: 'create', path, content: content.split(',')[1] || btoa(content), message: `Upload ${fileObj.name}` });
-                        this.showToast(`⚠️ Saved locally. Will sync when GitHub is reachable.`, 'info');
-                    }
+                    // Try to push the entire files-data.json to GitHub (works at home/phone)
+                    await this.saveFilesDataToGitHub();
 
                     resolve();
                 } catch (error) {
@@ -516,6 +534,59 @@ class AdminManager {
         }
 
         return await response.json();
+    }
+
+    async saveFilesDataToGitHub() {
+        try {
+            const token = this.getSavedToken();
+            if (!token) {
+                console.log('No token, cannot save to GitHub');
+                return;
+            }
+
+            // Convert files array to JSON
+            const filesJson = JSON.stringify(this.files, null, 2);
+            const base64Content = btoa(unescape(encodeURIComponent(filesJson)));
+
+            const filePath = `${this.storageFolder}/files-data.json`;
+
+            // Check if file exists to get SHA
+            let sha = null;
+            try {
+                const existing = await this.tryGitHubGetFile(filePath);
+                sha = existing.sha;
+            } catch (e) {
+                console.log('files-data.json does not exist yet, will create');
+            }
+
+            // Create or update the file
+            const response = await fetch(
+                `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${filePath}`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Update files data - ${this.files.length} file(s)`,
+                        content: base64Content,
+                        sha: sha // Include SHA if updating
+                    })
+                }
+            );
+
+            if (response.ok) {
+                console.log('✅ Successfully saved files-data.json to GitHub');
+                this.showToast('☁️ Synced to cloud!', 'success');
+            } else {
+                console.warn('Failed to save files-data.json:', response.status);
+            }
+        } catch (error) {
+            console.log('Could not save to GitHub (network restricted?):', error.message);
+            // Silent fail - files are still saved locally
+        }
     }
 
     async pullFromGitHub() {
@@ -704,22 +775,12 @@ class AdminManager {
 
         try {
             // Remove from local cache immediately
-            const fileObj = this.files.find(f => f.name === filename);
             this.files = this.files.filter(f => f.name !== filename);
             this.saveFilesLocal();
-            this.showToast(`🗑️ Deleted ${filename} (local)`, 'info');
+            this.showToast(`🗑️ Deleted ${filename}`, 'info');
 
-            // Try deleting from GitHub if token is configured
-            const path = `${this.storageFolder}/${filename}`;
-            try {
-                await this.tryGitHubDeleteFile(path, sha, `Delete ${filename}`);
-                this.showToast(`✅ Deleted ${filename} from GitHub`, 'success');
-            } catch (err) {
-                console.warn('GitHub delete failed, queuing op:', err.message);
-                // Queue delete operation so it will run once token/network available
-                this.queuePendingOperation({ type: 'delete', path, sha, message: `Delete ${filename}` });
-                this.showToast('⚠️ Deletion queued for sync when GitHub is reachable', 'info');
-            }
+            // Update files-data.json on GitHub
+            await this.saveFilesDataToGitHub();
 
             await this.loadFilesLocal();
         } catch (error) {

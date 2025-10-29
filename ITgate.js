@@ -382,7 +382,9 @@ class AdminManager {
                     this.saveFilesLocal();
 
                     // Try to push the entire files-data.json to GitHub (works at home/phone)
+                    console.log('Attempting to save files-data.json to GitHub...');
                     await this.saveFilesDataToGitHub();
+                    console.log('Upload complete!');
 
                     resolve();
                 } catch (error) {
@@ -538,7 +540,10 @@ class AdminManager {
 
     async saveFilesDataToGitHub() {
         try {
+            console.log('saveFilesDataToGitHub: Starting...');
             const token = this.getSavedToken();
+            console.log('saveFilesDataToGitHub: Token exists?', !!token);
+            
             if (!token) {
                 console.log('No token, cannot save to GitHub');
                 return;
@@ -546,20 +551,27 @@ class AdminManager {
 
             // Convert files array to JSON
             const filesJson = JSON.stringify(this.files, null, 2);
+            console.log('saveFilesDataToGitHub: Files JSON length:', filesJson.length);
+            
             const base64Content = btoa(unescape(encodeURIComponent(filesJson)));
+            console.log('saveFilesDataToGitHub: Base64 content length:', base64Content.length);
 
             const filePath = `${this.storageFolder}/files-data.json`;
+            console.log('saveFilesDataToGitHub: File path:', filePath);
 
             // Check if file exists to get SHA
             let sha = null;
             try {
+                console.log('saveFilesDataToGitHub: Checking if file exists...');
                 const existing = await this.tryGitHubGetFile(filePath);
                 sha = existing.sha;
+                console.log('saveFilesDataToGitHub: File exists, SHA:', sha);
             } catch (e) {
-                console.log('files-data.json does not exist yet, will create');
+                console.log('saveFilesDataToGitHub: File does not exist yet, will create');
             }
 
             // Create or update the file
+            console.log('saveFilesDataToGitHub: Sending to GitHub...');
             const response = await fetch(
                 `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/contents/${filePath}`,
                 {
@@ -577,15 +589,19 @@ class AdminManager {
                 }
             );
 
+            console.log('saveFilesDataToGitHub: Response status:', response.status);
+            
             if (response.ok) {
                 console.log('✅ Successfully saved files-data.json to GitHub');
                 this.showToast('☁️ Synced to cloud!', 'success');
             } else {
-                console.warn('Failed to save files-data.json:', response.status);
+                const errorText = await response.text();
+                console.warn('Failed to save files-data.json:', response.status, errorText);
+                this.showToast('⚠️ Could not sync to cloud', 'warning');
             }
         } catch (error) {
-            console.log('Could not save to GitHub (network restricted?):', error.message);
-            // Silent fail - files are still saved locally
+            console.error('Error in saveFilesDataToGitHub:', error);
+            this.showToast('⚠️ Saved locally only', 'warning');
         }
     }
 

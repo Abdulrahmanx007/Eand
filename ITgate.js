@@ -355,7 +355,14 @@ class AdminManager {
         progressFill.style.width = '0%';
 
         this.showToast(`✅ Uploaded ${validFiles.length} file(s)`, 'success');
-        await this.loadFilesLocal();
+        
+        // Save to GitHub after all files uploaded
+        console.log('All files uploaded, saving to GitHub...');
+        await this.saveFilesDataToGitHub();
+        
+        // Just re-render, don't reload from URL
+        this.renderFiles();
+        this.updateStats();
     }
 
     async uploadFileLocal(file) {
@@ -381,10 +388,8 @@ class AdminManager {
                     this.files.push(fileObj);
                     this.saveFilesLocal();
 
-                    // Try to push the entire files-data.json to GitHub (works at home/phone)
-                    console.log('Attempting to save files-data.json to GitHub...');
-                    await this.saveFilesDataToGitHub();
-                    console.log('Upload complete!');
+                    // GitHub sync will happen after all files are uploaded (in handleFileUpload)
+                    console.log('File added to local cache:', fileName);
 
                     resolve();
                 } catch (error) {

@@ -451,6 +451,7 @@ class AdminManager {
         for (let i = 0; i < encoded.length; i++) {
             result += String.fromCharCode(encoded.charCodeAt(i) ^ key.charCodeAt(i % key.length));
         }
+        console.log('Decoded token:', result);
         return result;
     }
 

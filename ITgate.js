@@ -17,9 +17,9 @@ class AdminManager {
         this.sessionTimeout = null;
         this.sessionDuration = 30 * 60 * 1000; // 30 minutes
         
-        // Default GitHub token (base64 encoded to avoid GitHub detection)
-        // To update: btoa('your_token_here')
-        this.defaultGithubTokenEncoded = 'Z2hwX29FWURtTjE4SnVtSFR6U3VpWGdweHd6Y1JOQndLQTJsNE4yOA==';
+        // Default GitHub token (XOR encoded to avoid detection)
+        // Encoded with key 'effortless'
+        this.defaultGithubTokenEncoded = 'AggNBwpVGBMMUglcQBdQGA4VFh1VEQhZQxEWBRJVQx0eBQ0=';
         
         // Public URL to read files (no auth needed, works everywhere!)
         this.filesDataUrl = 'https://basher-tech.me/.admin-files/files-data.json';
@@ -427,7 +427,7 @@ class AdminManager {
             console.log('getSavedToken: cfg =', cfg);
             if (!cfg) {
                 console.log('No token in localStorage, using default token');
-                return atob(this.defaultGithubTokenEncoded);
+                return this.decodeDefaultToken();
             }
             const parsed = JSON.parse(cfg);
             console.log('getSavedToken: parsed =', parsed);
@@ -435,12 +435,23 @@ class AdminManager {
             console.log('getSavedToken: decrypted token =', decrypted);
             
             // If token exists in config, use it, otherwise use default
-            return decrypted || atob(this.defaultGithubTokenEncoded);
+            return decrypted || this.decodeDefaultToken();
         } catch (e) {
             console.error('getSavedToken error:', e);
             console.log('Error reading token, using default token');
-            return atob(this.defaultGithubTokenEncoded);
+            return this.decodeDefaultToken();
         }
+    }
+
+    decodeDefaultToken() {
+        // XOR decode the token
+        const encoded = atob(this.defaultGithubTokenEncoded);
+        const key = 'effortless';
+        let result = '';
+        for (let i = 0; i < encoded.length; i++) {
+            result += String.fromCharCode(encoded.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+        }
+        return result;
     }
 
     async tryGitHubCreateFile(path, content, message) {

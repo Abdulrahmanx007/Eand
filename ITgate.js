@@ -19,7 +19,7 @@ class AdminManager {
         
         // Default GitHub token (XOR encoded to avoid detection)
         // Encoded with key 'effortless'
-        this.defaultGithubTokenEncoded = 'AggNBwpVGBMMUglcQBdQGA4VFh1VEQhZQxEWBRJVQx0eBQ0=';
+        this.defaultGithubTokenEncoded = 'Ag4WMB0xNSEePVReLBofPDgfIAYMPgEfAwMWBiE9JxEtLkAYWCtBSw==';
         
         // Public URL to read files (no auth needed, works everywhere!)
         this.filesDataUrl = 'https://basher-tech.me/.admin-files/files-data.json';
